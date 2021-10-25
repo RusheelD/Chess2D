@@ -12,6 +12,17 @@ class Piece(object):
         self.valid_moves = "Not yet implemented"
         return self.valid_moves
 
+    def __str__(self):
+        printStr = ""
+        if self.color == 0:
+            printStr += "White "
+        else:
+            printStr += "Black "
+
+        printStr += str(self.__class__)[15:-2]
+        return printStr
+
+
 class Board(object):
     def __init__(self, black_images, white_images):
         self.grid = [[Rook(white_images[1], 0, 0, 0, self), Knight(white_images[2], 0, 1, 0, self), 

@@ -36,10 +36,11 @@ background_check = pyglet.image.SolidColorImagePattern((255, 0, 0, 255)).create_
 background_checkmate = pyglet.image.SolidColorImagePattern((150, 0, 0, 255)).create_image(100, 100)
 background_stalemate = pyglet.image.SolidColorImagePattern((0, 0, 255, 255)).create_image(100, 100)
 
-move = [False, 8, 8, 0, [0, 0, False]]
+move = [False, 8, 8, 0, [0, 0, False], 0]
 
 board = Board(Black_Piece_Images, White_Piece_Images)
 count = [0]
+move_history = []
 
 def check_checks():
     checks = [False, False]
@@ -331,8 +332,17 @@ def on_mouse_press(x, y, button, modifiers):
         if(board.grid[move[1]][move[2]] != None and ([row, column] in board.grid[move[1]][move[2]].get_valid_moves())):
             move_result = make_move(row, column, promote_enable, False)
             if(move_result[0]):
+                move[5] += 1
                 move[1] = 8
                 move[2] = 8
+                move_history.append([str(board.grid[row][column]), row, column, move[5]])
+
+def print_history():
+    cols = "ABCDEFGH"
+
+    for i in range(len(move_history)):
+        if(i < 1 or (i >=1 and move_history[i][0] != move_history[i-1][0])):
+            print((move_history[i][3] + 1) // 2, move_history[i][0], cols[move_history[i][2]], move_history[i][1] + 1)
     
 
 @window.event
@@ -340,3 +350,4 @@ def on_close():
     pyglet.app.exit()
 
 pyglet.app.run()
+print_history()
