@@ -1,0 +1,6 @@
+1 White Pawn E 4
+1 Black Pawn E 5
+2 White Knight F 3
+2 Black Knight C 6
+3 White Knight C 3
+3 Black Knight F 6
