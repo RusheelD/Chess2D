@@ -339,7 +339,7 @@ def on_mouse_press(x, y, button, modifiers):
                 
 
 def store_history():
-    storage = open("Recent Game.txt", 'w')
+    storage = open("RecentGame.txt", 'w')
     cols = "ABCDEFGH" 
 
     for i in range(len(move_history)):
