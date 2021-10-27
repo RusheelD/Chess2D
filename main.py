@@ -333,9 +333,10 @@ def on_mouse_press(x, y, button, modifiers):
             move_result = make_move(row, column, promote_enable, False)
             if(move_result[0]):
                 move[5] += 1
+                move_history.append([str(board.grid[row][column]), row, column, move[5], move[1], move[2]])
                 move[1] = 8
                 move[2] = 8
-                move_history.append([str(board.grid[row][column]), row, column, move[5]])
+                
 
 def store_history():
     storage = open("Recent Game.txt", 'w')
@@ -343,7 +344,7 @@ def store_history():
 
     for i in range(len(move_history)):
         if(i < 1 or (i >=1 and move_history[i][0] != move_history[i-1][0])):
-            storage.write(str((move_history[i][3] + 1) // 2) + " " + str(move_history[i][0]) + " " + str(cols[move_history[i][2]]) + " " + str(move_history[i][1] + 1))
+            storage.write(str((move_history[i][3] + 1) // 2) + " " + str(move_history[i][0]) + "\t" + str(cols[move_history[i][5]]) + str(move_history[i][4] + 1) + " " + str(cols[move_history[i][2]]) + str(move_history[i][1] + 1))
             storage.write("\n")
     
 
