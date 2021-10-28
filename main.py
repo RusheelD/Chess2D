@@ -36,7 +36,7 @@ background_check = pyglet.image.SolidColorImagePattern((255, 0, 0, 255)).create_
 background_checkmate = pyglet.image.SolidColorImagePattern((150, 0, 0, 255)).create_image(100, 100)
 background_stalemate = pyglet.image.SolidColorImagePattern((0, 0, 255, 255)).create_image(100, 100)
 
-move = [False, 8, 8, 0, [0, 0, False], 0]
+move = [False, 8, 8, 0, [0, 0, False], 0, False]
 
 board = Board(Black_Piece_Images, White_Piece_Images)
 count = [0]
@@ -309,6 +309,11 @@ def make_move(row, column, promote_enable, check):
         return [True, promote_enable, temp, None]
 
 @window.event
+def on_key_press(symbol, modifiers):
+    if(symbol == pyglet.window.key.L and not(move[6])):
+        load_game()
+
+@window.event
 def on_mouse_press(x, y, button, modifiers):
 
     r = int(y / 100)
@@ -334,8 +339,6 @@ def on_mouse_press(x, y, button, modifiers):
             if(move_result[0]):
                 move[5] += 1
                 move_history.append([str(board.grid[row][column]), row, column, move[5], move[1], move[2]])
-                move[1] = 8
-                move[2] = 8
                 
 
 def store_history():
@@ -344,9 +347,39 @@ def store_history():
 
     for i in range(len(move_history)):
         if(i < 1 or (i >=1 and move_history[i][0] != move_history[i-1][0])):
-            storage.write(str((move_history[i][3] + 1) // 2) + " " + str(move_history[i][0]) + "\t" + str(cols[move_history[i][5]]) + str(move_history[i][4] + 1) + " " + str(cols[move_history[i][2]]) + str(move_history[i][1] + 1))
+            storage.write(str((move_history[i][3] + 1) // 2) + " " + str(move_history[i][0]) + "\t\t" + str(cols[move_history[i][5]]) + str(move_history[i][4] + 1) + " " + str(cols[move_history[i][2]]) + str(move_history[i][1] + 1))
             storage.write("\n")
     
+    storage.close()
+
+def load_game():
+    past_game = open("RecentGame.txt", 'r')
+    past_game_moves = past_game.read().split('\n')[:-1]
+    cols = "ABCDEFGH"
+    for i in range(len(past_game_moves)):
+        past_game_moves[i] = past_game_moves[i][-5:]
+
+    move_temp_1 = move[1]
+    move_temp_2 = move[2]
+
+    move[3] = 1
+
+    for past_move in past_game_moves:
+        move[3] = abs(move[3] - 1)
+        past_move_origin = past_move[:2]
+        past_move_destination = past_move[-2:]
+
+        move[1] = int(past_move_origin[1]) - 1
+        move[2] = cols.find(past_move_origin[0])
+
+        make_move(int(past_move_destination[1]) - 1, cols.find(past_move_destination[0]), False, False)
+        move[5] += 1
+        move_history.append([str(board.grid[int(past_move_destination[1]) - 1][cols.find(past_move_destination[0])]), int(past_move_destination[1]) - 1, cols.find(past_move_destination[0]), move[5], move[1], move[2]])
+    
+    move[6] = True
+
+    move[1] = move_temp_1
+    move[2] = move_temp_2 
 
 @window.event
 def on_close():
