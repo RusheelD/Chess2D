@@ -57,11 +57,6 @@ def check_checks():
     return checks
 
 def call_draw(dt):
-    window.dispatch_event('on_draw')    
-
-@window.event
-def on_draw():
-    window.clear()
     checks = check_checks()
     no_moves = check_no_valid_moves()
     checkmate = (checks[0] or checks[1]) and no_moves
@@ -71,6 +66,16 @@ def on_draw():
         End().checkmate(move[3])
     if(stalemate and count[0] >= 1):
         End().stalemate()
+    
+    window.dispatch_event('on_draw')    
+
+@window.event
+def on_draw():
+    window.clear()
+    checks = check_checks()
+    no_moves = check_no_valid_moves()
+    checkmate = (checks[0] or checks[1]) and no_moves
+    stalemate = no_moves and not(checkmate)
 
     for r in range(len(board.grid)):
         for col in range(len(board.grid[r])):
@@ -94,11 +99,10 @@ def on_draw():
             else:
                 background_white.blit(100 * col, 100 * r)
 
-            if(checks[0] and [row, column] == King.White_King_Pos) or (checks[1] and [row, column] == King.Black_King_Pos):
-                if(no_moves):
-                    background_checkmate.blit(100 * col, 100 * r)
-                else:
-                    background_check.blit(100 * col, 100 * r)
+            if(checkmate and (checks[0] and [row, column] == King.White_King_Pos) or (checks[1] and [row, column] == King.Black_King_Pos)):
+                background_checkmate.blit(100 * col, 100 * r)
+            elif(checks[0] and [row, column] == King.White_King_Pos) or (checks[1] and [row, column] == King.Black_King_Pos):
+                background_check.blit(100 * col, 100 * r)
                 
             if(stalemate and ((not(checks[0]) and [row, column] == King.White_King_Pos) or (not(checks[1]) and [row, column] == King.Black_King_Pos))):
                 background_stalemate.blit(100 * col, 100 * r)
@@ -115,7 +119,7 @@ def on_draw():
         move[3] = abs(move[3] - 1)
         window.dispatch_event('on_draw')
         move[3] = abs(move[3] - 1)
-        pyglet.clock.schedule_once(call_draw, .5)
+        pyglet.clock.schedule_once(call_draw, .25)
     
     
 def check_no_valid_moves():
@@ -384,20 +388,18 @@ def load_game():
         move[1] = int(past_move_origin[1]) - 1
         move[2] = cols.find(past_move_origin[0])
 
-        pyglet.clock.schedule_once(call_draw, .1)
-
         make_move(int(past_move_destination[1]) - 1, cols.find(past_move_destination[0]), False, False)
         move[5] += 1
         move[6] += 1
-
-        pyglet.clock.schedule_once(call_draw, .5)
 
         move_history.append([str(board.grid[int(past_move_destination[1]) - 1][cols.find(past_move_destination[0])]), int(past_move_destination[1]) - 1, cols.find(past_move_destination[0]), move[5], move[1], move[2]])
 
     move[7] = True
 
     move[1] = move_temp_1
-    move[2] = move_temp_2 
+    move[2] = move_temp_2
+
+    pyglet.clock.schedule_once(call_draw, .1)
 
 @window.event
 def on_close():
