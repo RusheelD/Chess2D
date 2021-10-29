@@ -430,6 +430,8 @@ class King(Piece):
                                 continue
                             if move in piece.get_valid_moves():
                                 remove.append(move)
+                            if abs(move[1] - self.column) == 2 and [self.row, self.column] in piece.get_valid_moves():
+                                remove.append(move)
                         for move in remove:
                             try:
                                 self.valid_moves.remove(move)

@@ -2,7 +2,6 @@ import pyglet
 from pieces import *
 from Promote import Promote
 from End import End
-import time
 
 window = pyglet.window.Window(800, 800)
 window.set_caption("Chess Game")
@@ -57,8 +56,12 @@ def check_checks():
     
     return checks
 
+def call_draw(dt):
+    window.dispatch_event('on_draw')    
+
 @window.event
 def on_draw():
+    window.clear()
     checks = check_checks()
     no_moves = check_no_valid_moves()
     checkmate = (checks[0] or checks[1]) and no_moves
@@ -107,10 +110,12 @@ def on_draw():
     
     if(checkmate or stalemate):
         count[0] += 1
-    # if(move[6] < move[5]):
-    #     time.sleep(.1)
-    #     move[6] = move[5]
-    #     on_draw()
+    if(move[6] < move[5]):
+        move[6] = move[5]
+        move[3] = abs(move[3] - 1)
+        window.dispatch_event('on_draw')
+        move[3] = abs(move[3] - 1)
+        pyglet.clock.schedule_once(call_draw, .5)
     
     
 def check_no_valid_moves():
@@ -186,6 +191,8 @@ def make_move(row, column, promote_enable, check):
                     board.grid[7][5].row = 7
                     board.grid[7][5].column = 5
                     board.grid[7][7] = None
+            elif(check_checks()[0] or check_checks()[1]):
+                return [False, promote_enable, None, temp2]
         
         if(type(board.grid[move[1]][move[2]]) == King):
             if(move[3] == 0):
@@ -377,10 +384,16 @@ def load_game():
         move[1] = int(past_move_origin[1]) - 1
         move[2] = cols.find(past_move_origin[0])
 
+        pyglet.clock.schedule_once(call_draw, .1)
+
         make_move(int(past_move_destination[1]) - 1, cols.find(past_move_destination[0]), False, False)
         move[5] += 1
+        move[6] += 1
+
+        pyglet.clock.schedule_once(call_draw, .5)
+
         move_history.append([str(board.grid[int(past_move_destination[1]) - 1][cols.find(past_move_destination[0])]), int(past_move_destination[1]) - 1, cols.find(past_move_destination[0]), move[5], move[1], move[2]])
-    
+
     move[7] = True
 
     move[1] = move_temp_1
@@ -390,5 +403,7 @@ def load_game():
 def on_close():
     pyglet.app.exit()
 
+
+#pyglet.clock.schedule_interval(call_draw, 1)
 pyglet.app.run()
 store_history()
