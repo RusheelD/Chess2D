@@ -1,3 +1,4 @@
+import time
 import pyglet
 from pieces import *
 from Promote import Promote
@@ -67,7 +68,11 @@ def call_draw(dt):
     if(stalemate and count[0] >= 1):
         End().stalemate()
     
-    window.dispatch_event('on_draw')    
+    window.dispatch_event('on_draw') 
+
+def call_checkless_draw(dt):
+    window.dispatch_event('on_draw')
+    time.sleep(0.2)
 
 @window.event
 def on_draw():
@@ -114,6 +119,8 @@ def on_draw():
     
     if(checkmate or stalemate):
         count[0] += 1
+    else:
+        count[0] = 0
     if(move[6] < move[5]):
         move[6] = move[5]
         move[3] = abs(move[3] - 1)
@@ -323,6 +330,7 @@ def make_move(row, column, promote_enable, check):
             move[4][0] = move[4][0] // 2
             move[4][2] = False
         return [True, promote_enable, temp, None]
+    return False
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -340,7 +348,7 @@ def on_mouse_press(x, y, button, modifiers):
 
     if(move[0] == True and (row == move[1] and column == move[2])):
         move[0] = False
-        return
+        return False
 
     if(not(move[0])):
         if(board.grid[row][column] != None and board.grid[row][column].color == move[3]):
@@ -362,7 +370,7 @@ def store_history():
     cols = "ABCDEFGH" 
 
     for i in range(len(move_history)):
-        if(i < 1 or (i >=1 and move_history[i][0] != move_history[i-1][0])):
+        #if(i < 1 or (i >=1 and move_history[i][2] != move_history[i-1][2])):
             storage.write(str((move_history[i][3] + 1) // 2) + " " + str(move_history[i][0]) + "\t" + str(cols[move_history[i][5]]) + str(move_history[i][4] + 1) + " " + str(cols[move_history[i][2]]) + str(move_history[i][1] + 1))
             storage.write("\n")
     
@@ -371,6 +379,10 @@ def store_history():
 def load_game():
     past_game = open("RecentGame.txt", 'r')
     past_game_moves = past_game.read().split('\n')[:-1]
+
+    if past_game_moves == []:
+        return False
+
     cols = "ABCDEFGH"
     for i in range(len(past_game_moves)):
         past_game_moves[i] = past_game_moves[i][-5:]
@@ -378,26 +390,30 @@ def load_game():
     move_temp_1 = move[1]
     move_temp_2 = move[2]
 
-    move[3] = 1
+    move[3] = 0
 
     for past_move in past_game_moves:
-        move[3] = abs(move[3] - 1)
+
         past_move_origin = past_move[:2]
         past_move_destination = past_move[-2:]
 
         move[1] = int(past_move_origin[1]) - 1
         move[2] = cols.find(past_move_origin[0])
 
-        make_move(int(past_move_destination[1]) - 1, cols.find(past_move_destination[0]), False, False)
+        row = int(past_move_destination[1]) - 1
+        column = cols.find(past_move_destination[0])
+
+        make_move(row, column, False, False)
         move[5] += 1
         move[6] += 1
 
-        move_history.append([str(board.grid[int(past_move_destination[1]) - 1][cols.find(past_move_destination[0])]), int(past_move_destination[1]) - 1, cols.find(past_move_destination[0]), move[5], move[1], move[2]])
+        move_history.append([str(board.grid[row][column]), row, column, move[5], move[1], move[2]])
 
     move[7] = True
 
     move[1] = move_temp_1
     move[2] = move_temp_2
+    count[0] = 1
 
     pyglet.clock.schedule_once(call_draw, .1)
 
@@ -405,7 +421,5 @@ def load_game():
 def on_close():
     pyglet.app.exit()
 
-
-#pyglet.clock.schedule_interval(call_draw, 1)
 pyglet.app.run()
 store_history()

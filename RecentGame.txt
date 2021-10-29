@@ -5,3 +5,4 @@
 3 White Queen	D1 F3
 3 Black Pawn	A6 A5
 4 White Queen	F3 F7
+4 Black King	F7 E8
