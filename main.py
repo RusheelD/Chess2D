@@ -377,6 +377,10 @@ def store_history():
     storage.close()
 
 def load_game():
+    if board.grid != Board(Black_Piece_Images, White_Piece_Images).grid:
+        board.grid = Board(Black_Piece_Images, White_Piece_Images).grid
+    if move_history != []:
+        move_history.clear()
     past_game = open("RecentGame.txt", 'r')
     past_game_moves = past_game.read().split('\n')[:-1]
 
