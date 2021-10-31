@@ -126,7 +126,7 @@ def on_draw():
         move[3] = abs(move[3] - 1)
         window.dispatch_event('on_draw')
         move[3] = abs(move[3] - 1)
-        pyglet.clock.schedule_once(call_draw, .25)
+        pyglet.clock.schedule_once(call_draw, .5)
     
     
 def check_no_valid_moves():
@@ -355,7 +355,6 @@ def on_mouse_press(x, y, button, modifiers):
                 move[0] = True
                 move[1] = row
                 move[2] = column
-                #print(board.grid[row][column].get_valid_moves())
 
     else:
         if(board.grid[move[1]][move[2]] != None and ([row, column] in board.grid[move[1]][move[2]].get_valid_moves())):
@@ -370,9 +369,8 @@ def store_history():
     cols = "ABCDEFGH" 
 
     for i in range(len(move_history)):
-        #if(i < 1 or (i >=1 and move_history[i][2] != move_history[i-1][2])):
-            storage.write(str((move_history[i][3] + 1) // 2) + " " + str(move_history[i][0]) + "\t" + str(cols[move_history[i][5]]) + str(move_history[i][4] + 1) + " " + str(cols[move_history[i][2]]) + str(move_history[i][1] + 1))
-            storage.write("\n")
+        storage.write(str((move_history[i][3] + 1) // 2) + " " + str(move_history[i][0]) + "\t" + str(cols[move_history[i][5]]) + str(move_history[i][4] + 1) + " " + str(cols[move_history[i][2]]) + str(move_history[i][1] + 1))
+        storage.write("\n")
     
     storage.close()
 
@@ -413,13 +411,13 @@ def load_game():
 
         move_history.append([str(board.grid[row][column]), row, column, move[5], move[1], move[2]])
 
-    move[7] = True
-
     move[1] = move_temp_1
     move[2] = move_temp_2
     count[0] = 1
 
     pyglet.clock.schedule_once(call_draw, .1)
+
+    move[7] = True
 
 @window.event
 def on_close():
