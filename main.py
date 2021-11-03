@@ -68,7 +68,7 @@ def call_draw(dt):
     if(stalemate and count[0] >= 1):
         End().stalemate()
     
-    window.dispatch_event('on_draw') 
+    window.dispatch_event('on_draw')
 
 def call_checkless_draw(dt):
     window.dispatch_event('on_draw')
@@ -117,16 +117,17 @@ def on_draw():
                 temp_sprite.scale = 0.5
                 temp_sprite.draw()
     
-    if(checkmate or stalemate):
-        count[0] += 1
-    else:
-        count[0] = 0
     if(move[6] < move[5]):
         move[6] = move[5]
         move[3] = abs(move[3] - 1)
         window.dispatch_event('on_draw')
         move[3] = abs(move[3] - 1)
         pyglet.clock.schedule_once(call_draw, .5)
+    
+    if(checkmate or stalemate):
+        count[0] += 1
+    else:
+        count[0] = 0 
     
     
 def check_no_valid_moves():
