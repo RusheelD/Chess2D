@@ -1,3 +1,4 @@
+from Promote import Promote
 
 class Piece(object):
 
@@ -7,10 +8,53 @@ class Piece(object):
         self.column = column
         self.color = color
         self.board = board
+        self.valid_moves = []
+        self.steps_taken = 0
+        self.turns_moved = []
+        self.temp2 = None
+
+    def update_valid_moves(self):
+        self.valid_moves = self.get_valid_moves()
     
     def get_valid_moves(self):
-        self.valid_moves = "Not yet implemented"
+        self.valid_moves = self.calculate_valid_moves()
+        self.remove_invalid_moves()
         return self.valid_moves
+
+    def calculate_valid_moves(self):
+        self.valid_moves = []
+        return self.valid_moves
+
+    def get_attack_moves(self):
+        return self.calculate_valid_moves()
+
+    def remove_invalid_moves(self):
+        invalid_moves = self.board.get_invalid_moves(self)
+
+        for move in invalid_moves:
+            try:
+                self.valid_moves.remove(move)
+            except ValueError:
+                continue
+    
+    def move(self, row, column, checking = False):
+        self.board.grid[self.row][self.column] = None
+        self.board.grid[row][column] = self
+        origin_row = self.row
+        origin_column = self.column
+        self.row = row
+        self.column = column
+        if(checking == False):
+            self.steps_taken += 1
+            self.board.moves_made.append([self.board.current_turn, self, origin_row, origin_column, row, column])
+            self.turns_moved.append(self.board.current_turn)
+            self.board.current_turn += self.color
+
+    def undo_move(self, row, column, temp):
+        self.board.grid[row][column] = self
+        self.board.grid[self.row][self.column] = temp
+        self.row = row
+        self.column = column
 
     def __str__(self):
         printStr = ""
@@ -22,36 +66,74 @@ class Piece(object):
         printStr += str(self.__class__)[15:-2]
         return printStr
 
-
-class Board(object):
-    def __init__(self, black_images, white_images):
-        self.grid = [[Rook(white_images[1], 0, 0, 0, self), Knight(white_images[2], 0, 1, 0, self), 
-        Bishop(white_images[3], 0, 2, 0, self), Queen(white_images[4], 0, 3, 0, self), 
-        King(white_images[5], 0, 4, 0, self), Bishop(white_images[3], 0, 5, 0, self), 
-        Knight(white_images[2], 0, 6, 0, self), Rook(white_images[1], 0, 7, 0, self)], 
-        [Pawn(white_images[0], 1, 0, 0, self), Pawn(white_images[0], 1, 1, 0, self), 
-        Pawn(white_images[0], 1, 2, 0, self), Pawn(white_images[0], 1, 3, 0, self), 
-        Pawn(white_images[0], 1, 4, 0, self), Pawn(white_images[0], 1, 5, 0, self), 
-        Pawn(white_images[0], 1, 6, 0, self), Pawn(white_images[0], 1, 7, 0, self)], 
-        [None, None, None, None, None, None, None, None], 
-        [None, None, None, None, None, None, None, None], 
-        [None, None, None, None, None, None, None, None], 
-        [None, None, None, None, None, None, None, None], 
-        [Pawn(black_images[0], 6, 0, 1, self), Pawn(black_images[0], 6, 1, 1, self), 
-        Pawn(black_images[0], 6, 2, 1, self), Pawn(black_images[0], 6, 3, 1, self), 
-        Pawn(black_images[0], 6, 4, 1, self), Pawn(black_images[0], 6, 5, 1, self), 
-        Pawn(black_images[0], 6, 6, 1, self), Pawn(black_images[0], 6, 7, 1, self)], 
-        [Rook(black_images[1], 7, 0, 1, self), Knight(black_images[2], 7, 1, 1, self), 
-        Bishop(black_images[3], 7, 2, 1, self), Queen(black_images[4], 7, 3, 1, self), 
-        King(black_images[5], 7, 4, 1, self), Bishop(black_images[3], 7, 5, 1, self), 
-        Knight(black_images[2], 7, 6, 1, self), Rook(black_images[1], 7, 7, 1, self)]]
-
 class Pawn(Piece):
-    def get_valid_moves(self):
+    def move(self, row, column, checking = False):
+
+        if(self.column != column and self.board.grid[row][column] == None):
+            if(checking):
+                self.temp2 = [self.board.grid[self.row][column], self.row, column]
+            self.board.grid[self.row][column] = None
+            super().move(row, column, checking)
+
+        elif((row == 7 * abs(self.color - 1)) and not(checking)):
+            if(self.color == 0):
+                images = self.board.white_images
+            else:
+                images = self.board.black_images
+
+            self.board.grid[self.row][self.column] = None
+            choice = Promote().promote(self.color)
+            if(choice == "Queen"):
+                self.board.grid[row][column] = Queen(images[4], row, column, self.color, self.board)
+            elif(choice == "Rook"):
+                self.board.grid[row][column] = Rook(images[1], row, column, self.color, self.board)
+            elif(choice == "Bishop"):
+                self.board.grid[row][column] = Bishop(images[3], row, column, self.color, self.board)
+            elif(choice == "Knight"):
+                self.board.grid[row][column] = Knight(images[2], row, column, self.color, self.board)
+        else:
+            super().move(row, column, checking)
+
+    def undo_move(self, row, column, temp):
+        if self.temp2 != None:
+            self.board.grid[self.temp2[1]][self.temp2[2]] = self.temp2[0]
+            self.temp2 = None
+        super().undo_move(row, column, temp)
+        
+    def get_attack_moves(self):
+        self.attack_moves = []
+
+        if(self.color == 0):
+            multiplier = 1
+        else:
+            multiplier = -1
+
+        if(self.row != 7 and self.row != 0):
+            if(self.column != 7):
+                DR = self.board.grid[self.row + (1 * multiplier)][self.column + 1]
+            else:
+                DR = None
+
+            if(self.column != 0):
+                DL = self.board.grid[self.row + (1 * multiplier)][self.column - 1]
+            else:
+                DL = None
+        else:
+            DR = None
+            DL = None
+
+        if(DR != None and DR.color != self.color):
+            self.attack_moves.append([self.row + (1 * multiplier), self.column + 1])
+        if(DL != None and DL.color != self.color):
+            self.attack_moves.append([self.row + (1 * multiplier), self.column - 1])
+
+        return self.attack_moves
+
+    def calculate_valid_moves(self):
 
         self.valid_moves = []
         
-        if((self.color == 0 and self.row == 1) or (self.color == 1 and self.row == 6)):
+        if(self.steps_taken == 0):
             move_distance = 2
         else:
             move_distance = 1
@@ -92,15 +174,15 @@ class Pawn(Piece):
 
         en_pass_init = self.row == 4 - self.color
         if(en_pass_init):
-            if(AL != None and type(AL) == type(self)):
+            if(AL != None and type(AL) == type(self) and AL.color != self.color and AL == self.board.moves_made[-1][1] and AL.steps_taken == 1):
                 self.valid_moves.append([self.row + (1 * multiplier), self.column - 1])
-            if(AR != None and type(AR) == type(self)):
+            if(AR != None and type(AR) == type(self) and AR.color != self.color and AR == self.board.moves_made[-1][1] and AR.steps_taken == 1):
                 self.valid_moves.append([self.row + (1 * multiplier), self.column + 1])
         
         return self.valid_moves
 
 class Rook(Piece):   
-    def get_valid_moves(self):
+    def calculate_valid_moves(self):
 
         self.valid_moves = []
 
@@ -139,7 +221,7 @@ class Rook(Piece):
         return self.valid_moves
 
 class Bishop(Piece):
-    def get_valid_moves(self):
+    def calculate_valid_moves(self):
 
         self.valid_moves = []
 
@@ -188,7 +270,7 @@ class Bishop(Piece):
         return self.valid_moves
 
 class Knight(Piece):
-    def get_valid_moves(self):
+    def calculate_valid_moves(self):
 
         self.valid_moves = []
 
@@ -225,7 +307,7 @@ class Knight(Piece):
 
 
 class Queen(Piece):
-    def get_valid_moves(self):
+    def calculate_valid_moves(self):
         self.valid_moves = []
 
         min_row = self.row
@@ -309,7 +391,98 @@ class King(Piece):
     Black_King_Moves = 0
     White_King_Pos = [0, 4]
     Black_King_Pos = [7, 4]
-    def get_valid_moves(self):
+
+    def white_in_check(self):
+        for row in self.board.grid:
+            for piece in row:
+                if(piece != None and piece.color == 1 and King.White_King_Pos in piece.get_attack_moves()):
+                    return True
+
+    def black_in_check(self):
+        for row in self.board.grid:
+            for piece in row:
+                if(piece != None and piece.color == 0 and King.Black_King_Pos in piece.get_attack_moves()):
+                    return True
+
+    def move(self, row, column, checking = False):
+        if(abs(column - self.column) == 2):
+            if(row == 0 and King.White_King_Moves == 0 and not(self.white_in_check())):
+                if(column == 2 and type(self.board.grid[0][0]) == Rook and self.board.grid[0][0].steps_taken == 0):
+                    self.board.grid[0][0].move(0, 3, checking)
+                    if(not(checking)):
+                        self.board.moves_made = self.board.moves_made[:-1]
+                        self.board.current_turn -= self.color
+                    super().move(row, column, checking)
+                    King.White_King_Moves += 1
+                    King.White_King_Pos = [self.row, self.column]
+                elif(column == 6 and type(self.board.grid[0][7]) == Rook and self.board.grid[0][7].steps_taken == 0):
+                    self.board.grid[0][7].move(0, 5, checking)
+                    if(not(checking)):
+                        self.board.moves_made = self.board.moves_made[:-1]
+                        self.board.current_turn -= self.color
+                    super().move(row, column, checking)
+                    King.White_King_Moves += 1
+                    King.White_King_Pos = [self.row, self.column]
+            elif(row == 7 and King.Black_King_Moves == 0 and not(self.black_in_check())):
+                if(column == 2 and type(self.board.grid[7][0]) == Rook and self.board.grid[7][0].steps_taken == 0):
+                    self.board.grid[7][0].move(7, 3, checking)
+                    if(not(checking)):
+                        self.board.moves_made = self.board.moves_made[:-1]
+                        self.board.current_turn -= self.color
+                    super().move(row, column, checking)
+                    King.Black_King_Moves += 1
+                    King.Black_King_Pos = [self.row, self.column]
+                elif(column == 6 and type(self.board.grid[7][7]) == Rook and self.board.grid[7][7].steps_taken == 0):
+                    self.board.grid[7][7].move(7, 5, checking)
+                    if(not(checking)):
+                        self.board.moves_made = self.board.moves_made[:-1]
+                        self.board.current_turn -= self.color
+                    super().move(row, column, checking)
+                    King.Black_King_Moves += 1
+                    King.Black_King_Pos = [self.row, self.column]
+        else:
+            super().move(row, column, checking)
+            if(self.color == 0):
+                King.White_King_Moves += 1
+                King.White_King_Pos = [self.row, self.column]
+            else:
+                King.Black_King_Moves += 1
+                King.Black_King_Pos = [self.row, self.column]
+
+    def undo_move(self, row, column, temp):
+        if(abs(column - self.column) == 2):
+            if(row == 0):
+                if(self.column == 2):
+                    self.board.grid[0][3].undo_move(0, 0, None)
+                    super().undo_move(row, column, temp)
+                    King.White_King_Moves -= 1
+                    King.White_King_Pos = [self.row, self.column]
+                elif(self.column == 6):
+                    self.board.grid[0][5].undo_move(0, 7, None)
+                    super().undo_move(row, column, temp)
+                    King.White_King_Moves -= 1
+                    King.White_King_Pos = [self.row, self.column]
+            elif(row == 7):
+                if(self.column == 2):
+                    self.board.grid[7][3].undo_move(7, 0, None)
+                    super().undo_move(row, column, temp)
+                    King.Black_King_Moves -= 1
+                    King.Black_King_Pos = [self.row, self.column]
+                elif(self.column == 6):
+                    self.board.grid[7][5].undo_move(7, 7, None)
+                    super().undo_move(row, column, temp)
+                    King.Black_King_Moves -= 1
+                    King.Black_King_Pos = [self.row, self.column]
+        else:
+            super().undo_move(row, column, temp)
+            if(self.color == 0):
+                King.White_King_Moves -= 1
+                King.White_King_Pos = [self.row, self.column]
+            else:
+                King.Black_King_Moves -= 1
+                King.Black_King_Pos = [self.row, self.column]
+
+    def calculate_valid_moves(self):
 
         self.valid_moves = []
 
@@ -426,11 +599,9 @@ class King(Piece):
                     if type(piece) != King:
                         remove = []
                         for move in self.valid_moves:
-                            if type(piece) == Pawn and move[1] == piece.column:
-                                continue
-                            if move in piece.get_valid_moves():
+                            if move in piece.get_attack_moves():
                                 remove.append(move)
-                            if abs(move[1] - self.column) == 2 and [self.row, self.column] in piece.get_valid_moves():
+                            if abs(move[1] - self.column) == 2 and [self.row, self.column] in piece.get_attack_moves():
                                 remove.append(move)
                         for move in remove:
                             try:
@@ -472,4 +643,5 @@ class King(Piece):
                             self.valid_moves.remove(move)
                         except ValueError:
                             continue
+        
         return self.valid_moves

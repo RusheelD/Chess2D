@@ -1,31 +1,37 @@
 import pyglet
 
-pieces = pyglet.image.load('1200px-Chess_Pieces_Sprite.svg.png')
+pieces = pyglet.image.load('Pieces-Images.png')
+
 Black_Queen_Image = pieces.get_region(200, 0, 200, 200)
 White_Queen_Image = pieces.get_region(200, 200, 200, 200)
+
 Black_Bishop_Image = pieces.get_region(400, 0, 200, 200)
 White_Bishop_Image = pieces.get_region(400, 200, 200, 200)
+
 Black_Knight_Image = pieces.get_region(600, 0, 200, 200)
 White_Knight_Image = pieces.get_region(600, 200, 200, 200)
+
 Black_Rook_Image = pieces.get_region(800, 0, 200, 200)
 White_Rook_Image = pieces.get_region(800, 200, 200, 200)
-Black_Pawn_Image = pieces.get_region(1000, 0, 200, 200)
-White_Pawn_Image = pieces.get_region(1000, 200, 200, 200)
 
 class Promote(object):
     def __init__(self):
         self.queens = [pyglet.sprite.Sprite(White_Queen_Image, 0, 0), pyglet.sprite.Sprite(Black_Queen_Image, 0, 0)]
         self.queens[0].scale = 0.5
         self.queens[1].scale = 0.5
+
         self.rooks = [pyglet.sprite.Sprite(White_Rook_Image, 100, 0), pyglet.sprite.Sprite(Black_Rook_Image, 100, 0)]
         self.rooks[0].scale = 0.5
         self.rooks[1].scale = 0.5
+
         self.bishops = [pyglet.sprite.Sprite(White_Bishop_Image, 200, 0), pyglet.sprite.Sprite(Black_Bishop_Image, 200, 0)]
         self.bishops[0].scale = 0.5
         self.bishops[1].scale = 0.5
+
         self.knights = [pyglet.sprite.Sprite(White_Knight_Image, 300, 0), pyglet.sprite.Sprite(Black_Knight_Image, 300, 0)]
         self.knights[0].scale = 0.5
         self.knights[1].scale = 0.5
+
         self.sprites = [self.queens, self.rooks, self.bishops, self.knights]
         self.pieces = ["Queen", "Rook", "Bishop", "Knight"]
         self.color = 0
@@ -56,7 +62,6 @@ class Promote(object):
 
         if row == 0:
             self.choices[column] = 1
-        #print(self.choices, row, column, self.pop_up._mouse_x, self.pop_up._mouse_y, x, y)
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.pop_up._mouse_x = self.pop_up._mouse_x + dx
