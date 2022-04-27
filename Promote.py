@@ -62,6 +62,17 @@ class Promote(object):
 
         if row == 0:
             self.choices[column] = 1
+    
+    def on_key_press(self, symbol, modifiers):
+        if (symbol == pyglet.window.key.Q):
+            self.choices[0] = 1
+        elif (symbol == pyglet.window.key.R):
+            self.choices[1] = 1
+        elif (symbol == pyglet.window.key.B):
+            self.choices[2] = 1
+        elif (symbol == pyglet.window.key.N):
+            self.choices[3] = 1
+        return pyglet.event.EVENT_HANDLED
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.pop_up._mouse_x = self.pop_up._mouse_x + dx
