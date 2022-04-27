@@ -1,7 +1,0 @@
-1 White Pawn	E2 E3
-1 Black Pawn	A7 A6
-2 White Bishop	F1 C4
-2 Black Pawn	A6 A5
-3 White Queen	D1 F3
-3 Black Rook	A8 A6
-4 White Queen	F3 F7
