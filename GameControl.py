@@ -49,45 +49,43 @@ class GameControl(object):
 
     def load_game(self):
         self.board = Board()
-        past_game = open("RecentGame.txt", 'r')
-        past_game_moves = past_game.read().split('\n')[:-1]
+        with open("RecentGame.txt", 'r') as past_game:
+            past_game_moves = past_game.read().split('\n')[:-1]
 
-        if past_game_moves == []:
-            return False
+            if past_game_moves == []:
+                return False
 
-        cols = "ABCDEFGH"
-        for i in range(len(past_game_moves)):
-            past_game_moves[i] = past_game_moves[i][-5:]
+            cols = "ABCDEFGH"
+            for i in range(len(past_game_moves)):
+                past_game_moves[i] = past_game_moves[i][-5:]
 
-        self.color_to_move = 0
+            self.color_to_move = 0
 
-        for past_move in past_game_moves:
+            for past_move in past_game_moves:
 
-            past_move_origin = past_move[:2]
-            past_move_destination = past_move[-2:]
+                past_move_origin = past_move[:2]
+                past_move_destination = past_move[-2:]
 
-            origin_row = int(past_move_origin[1]) - 1
-            origin_column = cols.find(past_move_origin[0])
+                origin_row = int(past_move_origin[1]) - 1
+                origin_column = cols.find(past_move_origin[0])
 
-            row = int(past_move_destination[1]) - 1
-            column = cols.find(past_move_destination[0])
+                row = int(past_move_destination[1]) - 1
+                column = cols.find(past_move_destination[0])
 
-            self.board.grid[origin_row][origin_column].move(row, column)
-            self.color_to_move = abs(self.color_to_move - 1)
+                self.board.grid[origin_row][origin_column].move(row, column)
+                self.color_to_move = abs(self.color_to_move - 1)
 
-            self.loaded = True
+                self.loaded = True
 
     def store_history(self):
-        storage = open("RecentGame.txt", 'w')
-        cols = "ABCDEFGH" 
+        with open("RecentGame.txt", 'w') as storage:
+            cols = "ABCDEFGH" 
 
-        for i in range(len(self.board.moves_made)):
-            storage.write(str(self.board.moves_made[i][0]) + " " + 
-            str(self.board.moves_made[i][1]) + "\t" + 
-            str(cols[self.board.moves_made[i][3]]) + 
-            str(self.board.moves_made[i][2] + 1) + " " + 
-            str(cols[self.board.moves_made[i][5]]) + 
-            str(self.board.moves_made[i][4] + 1))
-            storage.write("\n")
-        
-        storage.close()
+            for i in range(len(self.board.moves_made)):
+                storage.write(str(self.board.moves_made[i][0]) + " " + 
+                str(self.board.moves_made[i][1]) + "\t" + 
+                str(cols[self.board.moves_made[i][3]]) + 
+                str(self.board.moves_made[i][2] + 1) + " " + 
+                str(cols[self.board.moves_made[i][5]]) + 
+                str(self.board.moves_made[i][4] + 1))
+                storage.write("\n")
