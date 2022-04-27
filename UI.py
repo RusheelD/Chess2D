@@ -99,6 +99,8 @@ class UI(object):
             self.turn_count = len(self.game.board.moves_made)
             self.game_over_frames = 2
             pyglet.clock.schedule_once(self.call_draw, .1)
+        else:
+            return pyglet.event.EVENT_HANDLED
         
     def on_mouse_press(self, x, y, button, modifiers):
 
@@ -111,3 +113,4 @@ class UI(object):
 
     def on_close(self):
         pyglet.app.exit()
+    

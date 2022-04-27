@@ -1,12 +1,16 @@
 import pyglet
 
+# Creates the user experience for displaying the game over state
 class End(object):
     def __init__(self):
         self.color = 0
         self.pop_up = pyglet.window.Window(400, 200)
         self.pop_up.set_caption("Game over")
         self.pop_up.push_handlers(self)
+
+        # Figure out how to center in the screen for any resolution.
         self.pop_up.set_location(500, 200)
+
         self.background = pyglet.image.SolidColorImagePattern((255, 255, 255, 255)).create_image(self.pop_up.width, self.pop_up.height)
         self.label_result = None
         self.label_exit = pyglet.text.Label('Click anywhere to exit',
@@ -21,6 +25,9 @@ class End(object):
         self.background.blit(0, 0)
         self.label_result.draw()
         self.label_exit.draw()
+
+    def on_key_press(self, symbol, modifiers):
+        return pyglet.event.EVENT_HANDLED
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.mouse_clicked = True
