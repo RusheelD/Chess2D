@@ -3,18 +3,27 @@ from Promote import Promote
 class Piece(object):
 
     def __init__(self, image, row, column, color, board):
+        values = {King: 0, Queen: 9, Rook: 5, Bishop: 3, Knight: 3, Pawn: 1}
         self.image = image
         self.row = row
         self.column = column
         self.color = color
         self.board = board
+        self.value = values[type(self)]
         self.valid_moves = []
         self.steps_taken = 0
-        self.turns_moved = []
         self.temp2 = None
 
     def update_valid_moves(self):
         self.valid_moves = self.get_valid_moves()
+        self.refine_valid_moves()
+
+    def refine_valid_moves(self):
+        seen = []
+        for move in self.valid_moves:
+            if not(move in seen):
+                seen.append(move)
+        self.valid_moves = seen
     
     def get_valid_moves(self):
         self.valid_moves = self.calculate_valid_moves()
@@ -37,7 +46,7 @@ class Piece(object):
             except ValueError:
                 continue
     
-    def move(self, row, column, checking = False):
+    def move(self, row, column, checking = False, choice = None):
         self.board.grid[self.row][self.column] = None
         self.board.grid[row][column] = self
         origin_row = self.row
@@ -47,7 +56,6 @@ class Piece(object):
         if(checking == False):
             self.steps_taken += 1
             self.board.moves_made.append([self.board.current_turn, self, origin_row, origin_column, row, column])
-            self.turns_moved.append(self.board.current_turn)
             self.board.current_turn += self.color
 
     def undo_move(self, row, column, temp):
@@ -67,7 +75,7 @@ class Piece(object):
         return printStr
 
 class Pawn(Piece):
-    def move(self, row, column, checking = False):
+    def move(self, row, column, checking = False, choice = None):
 
         if(self.column != column and self.board.grid[row][column] == None):
             if(checking):
@@ -82,7 +90,8 @@ class Pawn(Piece):
                 images = self.board.black_images
 
             self.board.grid[self.row][self.column] = None
-            choice = Promote().promote(self.color)
+            if(choice == None):
+                choice = Promote().promote(self.color)
             if(choice == "Queen"):
                 self.board.grid[row][column] = Queen(images[4], row, column, self.color, self.board)
             elif(choice == "Rook"):
@@ -91,6 +100,7 @@ class Pawn(Piece):
                 self.board.grid[row][column] = Bishop(images[3], row, column, self.color, self.board)
             elif(choice == "Knight"):
                 self.board.grid[row][column] = Knight(images[2], row, column, self.color, self.board)
+            del self
         else:
             super().move(row, column, checking)
 
@@ -404,7 +414,7 @@ class King(Piece):
                 if(piece != None and piece.color == 0 and King.Black_King_Pos in piece.get_attack_moves()):
                     return True
 
-    def move(self, row, column, checking = False):
+    def move(self, row, column, checking = False, choice = None):
         if(abs(column - self.column) == 2):
             if(row == 0 and King.White_King_Moves == 0 and not(self.white_in_check())):
                 if(column == 2 and type(self.board.grid[0][0]) == Rook and self.board.grid[0][0].steps_taken == 0):

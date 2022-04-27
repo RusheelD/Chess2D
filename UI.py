@@ -1,5 +1,5 @@
 import pyglet
-from GameControl import GameControl
+from AIControl import AIControl
 from End import End
 
 class UI(object):
@@ -22,16 +22,20 @@ class UI(object):
 
         self.game_over_frames = 0
 
-        self.game = GameControl()
+        self.end_signaled = False
+
+        self.game = AIControl(True)
     
     def call_draw(self, dt):
         game_over = self.game.is_game_over()
         stalemate = game_over[0] and game_over[1] == -1
         checkmate = game_over[0] and not(stalemate)
 
-        if(checkmate and self.game_over_frames >= 2):
+        if(checkmate and self.game_over_frames >= 2) and not(self.end_signaled):
+            self.end_signaled = True
             End().checkmate(game_over[1])
-        if(stalemate and self.game_over_frames >= 2):
+        if(stalemate and self.game_over_frames >= 2) and not(self.end_signaled):
+            self.end_signaled = True
             End().stalemate()
         
         self.window.dispatch_event('on_draw')
@@ -46,8 +50,8 @@ class UI(object):
 
         for r in range(len(self.game.board.grid)):
             for col in range(len(self.game.board.grid[r])):
-                row = abs(7 * self.game.color_to_move - r)
-                column = abs(7 * self.game.color_to_move - col)
+                row = r
+                column = col
                 piece = self.game.board.grid[row][column]
 
                 if(self.game.is_piece_selected and self.game.selected_piece != None):
@@ -85,14 +89,18 @@ class UI(object):
             self.window.dispatch_event('on_draw')
             self.game.color_to_move = abs(self.game.color_to_move - 1)
             pyglet.clock.schedule_once(self.call_draw, .25)
-        
+
+        if(self.game.AI_refreshed == False):
+            self.game.AI_refreshed = True
+            pyglet.clock.schedule_once(self.call_draw, .1)
+            
         if(checkmate or stalemate):
             self.game_over_frames += 1
             if(self.game_over_frames == 2):
                 pyglet.clock.schedule_once(self.call_draw, .1)
         else:
-            self.game_over_frames = 0
-
+            self.game_over_frames = 0      
+                
     def on_key_press(self, symbol, modifiers):
         if(symbol == pyglet.window.key.L and not(self.game.loaded)):
             self.game.load_game()
@@ -105,12 +113,11 @@ class UI(object):
     def on_mouse_press(self, x, y, button, modifiers):
 
         r = int(y / 100)
-        row = abs(7 * self.game.color_to_move - r)
+        row = r #abs(7 * self.game.color_to_move - r)
         col = int(x / 100)
-        column = abs(7 * self.game.color_to_move - col)
+        column = col #abs(7 * self.game.color_to_move - col)
 
         self.game.select_tile(row, column)
 
     def on_close(self):
         pyglet.app.exit()
-    

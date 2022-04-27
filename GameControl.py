@@ -8,7 +8,7 @@ class GameControl(object):
         self.color_to_move = 0
         self.loaded = False
 
-    def select_tile(self, row, column):
+    def select_tile(self, row, column, choice = None):
         if(self.board.grid[row][column] == None and not(self.is_piece_selected)):
             self.is_piece_selected = False
             self.selected_piece = None
@@ -46,6 +46,9 @@ class GameControl(object):
 
     def in_check(self):
         return self.board.kings_in_check()[self.color_to_move]
+
+    def update(self):
+        return
 
     def load_game(self):
         self.board = Board()
