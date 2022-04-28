@@ -116,17 +116,10 @@ class UI(object):
         
     def on_mouse_press(self, x, y, button, modifiers):
 
-<<<<<<< HEAD
-        r = int(y / 100)
-        row = r #abs(7 * self.game.color_to_move - r)
-        col = int(x / 100)
-        column = col #abs(7 * self.game.color_to_move - col)
-=======
         r = int(y // (self.scale // 8))
-        row = abs(7 * self.game.color_to_move - r)
+        row = r #abs(7 * self.game.color_to_move - r)
         col = int(x // (self.scale // 8))
-        column = abs(7 * self.game.color_to_move - col)
->>>>>>> 4de53f3 (cleaned up background image code, and added a scale factor)
+        column = col #abs(7 * self.game.color_to_move - col)
 
         self.game.select_tile(row, column)
 
