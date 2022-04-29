@@ -4,7 +4,7 @@ from UI import UI
 def main():
     ui = UI()
     pyglet.app.run()
-    ui.game_main.store_history()
+    ui.game.store_history()
 
 if __name__ == '__main__':
     main()

@@ -13,7 +13,7 @@ class UI(object):
 
         self.game_over_frames = 0
 
-        self.game_main = GameControl()
+        self.game = GameControl()
     
     def make_windows(self):
         self.window_main = pyglet.window.Window(self.scale , self.scale)
@@ -46,7 +46,7 @@ class UI(object):
         self.background_stalemate = pyglet.image.SolidColorImagePattern((0, 0, 255, 255)).create_image(self.scale // 8, self.scale // 8)
 
     def call_draw(self, dt):
-        game_over = self.game_main.is_game_over()
+        game_over = self.game.is_game_over()
         stalemate = game_over[0] and game_over[1] == -1
         checkmate = game_over[0] and not(stalemate)
 
@@ -61,23 +61,23 @@ class UI(object):
 
     def on_draw(self):
         self.window_main.clear()
-        in_check = self.game_main.in_check()
-        game_over = self.game_main.is_game_over()
+        in_check = self.game.in_check()
+        game_over = self.game.is_game_over()
         stalemate = game_over[0] and game_over[1] == -1
         checkmate = game_over[0] and not(stalemate)
         
 
-        for r in range(len(self.game_main.board.grid)):
-            for col in range(len(self.game_main.board.grid[r])):
-                row = abs(7 * self.game_main.color_to_move - r)
-                column = abs(7 * self.game_main.color_to_move - col)
+        for r in range(len(self.game.main_board.grid)):
+            for col in range(len(self.game.main_board.grid[r])):
+                row = abs(7 * self.game.color_to_move - r)
+                column = abs(7 * self.game.color_to_move - col)
                 self.draw(r, col, row, column, game_over, stalemate, in_check)
         
-        if(self.turn_count < len(self.game_main.board.moves_made)):
-            self.turn_count = len(self.game_main.board.moves_made)
-            self.game_main.color_to_move = abs(self.game_main.color_to_move - 1)
+        if(self.turn_count < len(self.game.main_board.moves_made)):
+            self.turn_count = len(self.game.main_board.moves_made)
+            self.game.color_to_move = abs(self.game.color_to_move - 1)
             self.window_main.dispatch_event('on_draw')
-            self.game_main.color_to_move = abs(self.game_main.color_to_move - 1)
+            self.game.color_to_move = abs(self.game.color_to_move - 1)
             pyglet.clock.schedule_once(self.call_draw, .25)
         
         if(checkmate or stalemate):
@@ -89,23 +89,23 @@ class UI(object):
 
     def draw_white(self):
         self.window_white.clear()
-        in_check = self.game_main.in_check()
-        game_over = self.game_main.is_game_over()
+        in_check = self.game.in_check()
+        game_over = self.game.is_game_over()
         stalemate = game_over[0] and game_over[1] == -1
         checkmate = game_over[0] and not(stalemate)
         
 
-        for r in range(len(self.game_main.board.grid)):
-            for col in range(len(self.game_main.board.grid[r])):
+        for r in range(len(self.game.main_board.grid)):
+            for col in range(len(self.game.main_board.grid[r])):
                 row = abs(7 * 0 - r)
                 column = abs(7 * 0 - col)
                 self.draw(r, col, row, column, game_over, stalemate, in_check)
         
-        if(self.turn_count < len(self.game_main.board.moves_made)):
-            self.turn_count = len(self.game_main.board.moves_made)
-            self.game_main.color_to_move = abs(self.game_main.color_to_move - 1)
+        if(self.turn_count < len(self.game.main_board.moves_made)):
+            self.turn_count = len(self.game.main_board.moves_made)
+            self.game.color_to_move = abs(self.game.color_to_move - 1)
             self.window_white.dispatch_event('on_draw')
-            self.game_main.color_to_move = abs(self.game_main.color_to_move - 1)
+            self.game.color_to_move = abs(self.game.color_to_move - 1)
             pyglet.clock.schedule_once(self.call_draw, .25)
         
         if(checkmate or stalemate):
@@ -117,23 +117,23 @@ class UI(object):
 
     def draw_black(self):
         self.window_black.clear()
-        in_check = self.game_main.in_check()
-        game_over = self.game_main.is_game_over()
+        in_check = self.game.in_check()
+        game_over = self.game.is_game_over()
         stalemate = game_over[0] and game_over[1] == -1
         checkmate = game_over[0] and not(stalemate)
         
 
-        for r in range(len(self.game_main.board.grid)):
-            for col in range(len(self.game_main.board.grid[r])):
+        for r in range(len(self.game.main_board.grid)):
+            for col in range(len(self.game.main_board.grid[r])):
                 row = abs(7 * 1 - r)
                 column = abs(7 * 1 - col)
                 self.draw(r, col, row, column, game_over, stalemate, in_check)
         
-        if(self.turn_count < len(self.game_main.board.moves_made)):
-            self.turn_count = len(self.game_main.board.moves_made)
-            self.game_main.color_to_move = abs(self.game_main.color_to_move - 1)
+        if(self.turn_count < len(self.game.main_board.moves_made)):
+            self.turn_count = len(self.game.main_board.moves_made)
+            self.game.color_to_move = abs(self.game.color_to_move - 1)
             self.window_black.dispatch_event('on_draw')
-            self.game_main.color_to_move = abs(self.game_main.color_to_move - 1)
+            self.game.color_to_move = abs(self.game.color_to_move - 1)
             pyglet.clock.schedule_once(self.call_draw, .25)
         
         if(checkmate or stalemate):
@@ -144,14 +144,14 @@ class UI(object):
             self.game_over_frames = 0
 
     def draw(self, r, col, row, column, game_over, stalemate, in_check):
-        piece = self.game_main.board.grid[row][column]
+        piece = self.game.main_board.grid[row][column]
 
-        if(self.game_main.is_piece_selected and self.game_main.selected_piece != None):
-            if([row, column] == [self.game_main.selected_piece.row, self.game_main.selected_piece.column]):
+        if(self.game.is_piece_selected and self.game.selected_piece != None):
+            if([row, column] == [self.game.selected_piece.row, self.game.selected_piece.column]):
                 self.background_select.blit(self.scale // 8 * col, self.scale // 8 * r)
-            elif([row, column] in self.game_main.board.grid[self.game_main.selected_piece.row][self.game_main.selected_piece.column].get_valid_moves() and row%2 == column%2):
+            elif([row, column] in self.game.main_board.grid[self.game.selected_piece.row][self.game.selected_piece.column].get_valid_moves() and row%2 == column%2):
                 self.background_option_dark.blit(self.scale // 8 * col, self.scale // 8 * r)
-            elif([row, column] in self.game_main.board.grid[self.game_main.selected_piece.row][self.game_main.selected_piece.column].get_valid_moves()):
+            elif([row, column] in self.game.main_board.grid[self.game.selected_piece.row][self.game.selected_piece.column].get_valid_moves()):
                 self.background_option_light.blit(self.scale // 8 * col, self.scale // 8 * r)
             elif(r%2 == col%2):
                 self.background_gray.blit(self.scale // 8 * col, self.scale // 8 * r)
@@ -163,11 +163,11 @@ class UI(object):
             self.background_white.blit(self.scale // 8 * col, self.scale // 8 * r)
         
         if(game_over[0]):
-            if((game_over[1] == 0 and [row, column] == self.game_main.board.get_white_king_pos()) or (game_over[1] == 1 and [row, column] == self.game_main.board.get_black_king_pos())):
+            if((game_over[1] == 0 and [row, column] == self.game.main_board.get_white_king_pos()) or (game_over[1] == 1 and [row, column] == self.game.main_board.get_black_king_pos())):
                 self.background_checkmate.blit(self.scale // 8 * col, self.scale // 8 * r)
-            elif(stalemate and ([row, column] == self.game_main.board.get_white_king_pos() or [row, column] == self.game_main.board.get_black_king_pos())):
+            elif(stalemate and ([row, column] == self.game.main_board.get_white_king_pos() or [row, column] == self.game.main_board.get_black_king_pos())):
                 self.background_stalemate.blit(self.scale // 8 * col, self.scale // 8 * r)
-        elif(in_check and ((self.game_main.color_to_move == 0 and [row, column] == self.game_main.board.get_white_king_pos()) or (self.game_main.color_to_move == 1 and [row, column] == self.game_main.board.get_black_king_pos()))):
+        elif(in_check and ((self.game.color_to_move == 0 and [row, column] == self.game.main_board.get_white_king_pos()) or (self.game.color_to_move == 1 and [row, column] == self.game.main_board.get_black_king_pos()))):
             self.background_check.blit(self.scale // 8 * col, self.scale // 8 * r)
 
         if piece != None:
@@ -176,9 +176,9 @@ class UI(object):
             temp_sprite.draw()
 
     def on_key_press(self, symbol, modifiers):
-        if(symbol == pyglet.window.key.L and not(self.game_main.loaded)):
-            self.game_main.load_game()
-            self.turn_count = len(self.game_main.board.moves_made)
+        if(symbol == pyglet.window.key.L and not(self.game.loaded)):
+            self.game.load_game()
+            self.turn_count = len(self.game.main_board.moves_made)
             self.game_over_frames = 2
             pyglet.clock.schedule_once(self.call_draw, .1)
         else:
@@ -187,19 +187,19 @@ class UI(object):
     def on_mouse_press(self, x, y, button, modifiers):
 
         r = int(y // (self.scale // 8))
-        row = abs(7 * self.game_main.color_to_move - r)
+        row = abs(7 * self.game.color_to_move - r)
         col = int(x // (self.scale // 8))
-        column = abs(7 * self.game_main.color_to_move - col)
+        column = abs(7 * self.game.color_to_move - col)
 
-        self.game_main.select_tile(row, column)
+        self.game.select_tile(row, column)
 
     def mouse_press_white(self, x, y, button, modifiers):
-        if(self.game_main.color_to_move != 0):
+        if(self.game.color_to_move != 0):
             return pyglet.event.EVENT_HANDLED
         self.on_mouse_press(x, y, button, modifiers)
 
     def mouse_press_black(self, x, y, button, modifiers):
-        if(self.game_main.color_to_move != 1):
+        if(self.game.color_to_move != 1):
             return pyglet.event.EVENT_HANDLED
         self.on_mouse_press(x, y, button, modifiers)
 
