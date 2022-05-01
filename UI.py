@@ -54,8 +54,8 @@ class UI(object):
 
         for r in range(len(self.game.board.grid)):
             for col in range(len(self.game.board.grid[r])):
-                row = r
-                column = col
+                row = abs(7 * abs(self.game.AI_color - 1) - r)
+                column = abs(7 * abs(self.game.AI_color - 1) - col)
                 piece = self.game.board.grid[row][column]
 
                 if(self.game.is_piece_selected and self.game.selected_piece != None):
@@ -86,7 +86,12 @@ class UI(object):
                     temp_sprite = pyglet.sprite.Sprite(piece.image, col * self.scale // 8, r * self.scale // 8)
                     temp_sprite.scale = 0.5 * (self.scale / 800)
                     temp_sprite.draw()
-        
+
+        if(not(self.game.is_game_over()[0]) and self.game.AI_enabled):
+                # self.updateAI()
+                pyglet.clock.schedule_once(self.game.updateAI, .001)
+                # print('something')
+
         if(self.turn_count < len(self.game.board.moves_made)):
             self.turn_count = len(self.game.board.moves_made)
             self.game.color_to_move = abs(self.game.color_to_move - 1)
@@ -117,9 +122,9 @@ class UI(object):
     def on_mouse_press(self, x, y, button, modifiers):
 
         r = int(y // (self.scale // 8))
-        row = r #abs(7 * self.game.color_to_move - r)
+        row = abs(7 * abs(self.game.AI_color - 1) - r)
         col = int(x // (self.scale // 8))
-        column = col #abs(7 * self.game.color_to_move - col)
+        column = abs(7 * abs(self.game.AI_color - 1) - col)
 
         self.game.select_tile(row, column)
 
