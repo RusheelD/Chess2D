@@ -44,7 +44,7 @@ class AIControl(GameControl):
         return self.selected_piece
     
     def updateAI(self, dt):
-        if self.color_to_move == self.AI_color:
+        if self.color_to_move == self.AI_color and not self.is_game_over():
             AI_move = self.AI.get_move()
             selected_piece = AI_move[0]
             selected_move = AI_move[1]
