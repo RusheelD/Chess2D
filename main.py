@@ -1,10 +1,8 @@
 import pyglet
-from UI import UI as UI
-from UIAI import UI as UiAi
-from UISynchronic import UI as UiSynchronic
+from GameMode import GameMode
 
 def main():
-    ui = UI()
+    ui = GameMode().choose_mode()
     pyglet.app.run()
     ui.game.store_history()
 
