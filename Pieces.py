@@ -3,6 +3,7 @@ from Promote import Promote
 class Piece(object):
 
     def __init__(self, image, row, column, color, board):
+        speeds = {King: 5, Queen: 4, Rook: 3, Bishop: 2, Knight: 2, Pawn: 0}
         self.image = image
         self.row = row
         self.column = column
@@ -12,6 +13,7 @@ class Piece(object):
         self.steps_taken = 0
         self.turns_moved = []
         self.temp2 = None
+        self.speed = speeds[type(self)]
 
     def update_valid_moves(self):
         self.valid_moves = self.get_valid_moves()

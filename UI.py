@@ -1,5 +1,5 @@
 import pyglet
-from GameControl import GameControl
+from MultiGameControl import MultiGameControl
 from End import End
 
 class UI(object):
@@ -13,7 +13,7 @@ class UI(object):
 
         self.game_over_frames = 0
 
-        self.game = GameControl()
+        self.game = MultiGameControl()
     
     def make_windows(self):
         self.window_main = pyglet.window.Window(self.scale , self.scale)
@@ -191,17 +191,29 @@ class UI(object):
         col = int(x // (self.scale // 8))
         column = abs(7 * self.game.color_to_move - col)
 
-        self.game.select_tile(row, column)
+        self.game.select_tile(row, column, self.game.main_board)
 
     def mouse_press_white(self, x, y, button, modifiers):
         if(self.game.color_to_move != 0):
             return pyglet.event.EVENT_HANDLED
-        self.on_mouse_press(x, y, button, modifiers)
+        
+        r = int(y // (self.scale // 8))
+        row = r
+        col = int(x // (self.scale // 8))
+        column = col
+
+        self.game.select_tile(row, column, self.game.white_board)
 
     def mouse_press_black(self, x, y, button, modifiers):
         if(self.game.color_to_move != 1):
             return pyglet.event.EVENT_HANDLED
-        self.on_mouse_press(x, y, button, modifiers)
+        
+        r = int(y // (self.scale // 8))
+        row = abs(7 * 1 - r)
+        col = int(x // (self.scale // 8))
+        column = abs(7 * 1 - col)
+
+        self.game.select_tile(row, column, self.game.black_board)
 
     def on_close(self):
         pyglet.app.exit()

@@ -57,6 +57,9 @@ class Board(object):
                 string += "\t" if piece == None else ""
             string += "\n"
         return string
+    
+    def copy(self, board):
+        self.grid = board.grid
 
     def get_white_king_pos(self):
         return King.White_King_Pos
