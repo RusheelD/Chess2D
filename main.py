@@ -1,5 +1,7 @@
 import pyglet
-from UIAI import UI
+from UI import UI as UI
+from UIAI import UI as UiAi
+from UISynchronic import UI as UiSynchronic
 
 def main():
     ui = UI()

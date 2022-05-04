@@ -3,16 +3,20 @@ from Promote import Promote
 class Piece(object):
 
     def __init__(self, image, row, column, color, board):
-        values = {King: 0, Queen: 9, Rook: 5, Bishop: 3, Knight: 3, Pawn: 1}
+        piece_data = {
+            King: {'speed': 5, 'value': 0}, Queen: {'speed': 4, 'value': 9}, Rook: {'speed': 3, 'value': 5}, 
+            Bishop: {'speed': 2, 'value': 3}, Knight: {'speed': 2, 'value': 3}, Pawn: {'speed': 1, 'value': 1}
+        }
         self.image = image
         self.row = row
         self.column = column
         self.color = color
         self.board = board
-        self.value = values[type(self)]
         self.valid_moves = []
         self.steps_taken = 0
         self.temp2 = None
+        self.value = piece_data[type(self)]['value']
+        self.speed = piece_data[type(self)]['speed']
 
     def update_valid_moves(self):
         self.valid_moves = self.get_valid_moves()
