@@ -11,7 +11,7 @@ class GameMode(object):
         self.UIs = [UiSynchronic, UI, UiAi]
         self.color = 0
 
-        self.pop_up = pyglet.window.Window(len(self.choices) * 150, 200)
+        self.pop_up = pyglet.window.Window(len(self.choices) * 150, 200, visible=False)
         self.pop_up.set_caption("Choose Game Mode")
         self.pop_up.push_handlers(self)
         self.pop_up.set_location(500, 200)
@@ -60,7 +60,12 @@ class GameMode(object):
     def on_close(self):
         self.choices[1] = 1
 
-    def choose_mode(self):
+    def choose_mode(self, choice=None):
+        if choice and (choice == 'S' or choice == 'O' or choice == 'T'):
+            self.pop_up.close()
+            return self.UIs[0]() if choice == 'S' else (self.UIs[1]() if choice == 'T' else self.UIs[2](ColorChoice().choose_color()))
+
+        self.pop_up.set_visible()
         self.pop_up.set_exclusive_mouse(False)
         self.pop_up.set_exclusive_mouse(True)
         self.pop_up.set_mouse_platform_visible(True)

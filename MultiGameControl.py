@@ -17,7 +17,7 @@ class MultiGameControl(GameControl):
         self.color_to_move = 0
         self.loaded = False
 
-    def select_tile(self, row, column, board: Board=None):
+    def select_tile(self, row, column, choice=None, board: Board=None):
         if(self.main_board.grid[row][column] == None and not(self.is_piece_selected)):
             self.is_piece_selected = False
             self.selected_piece = None
