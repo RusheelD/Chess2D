@@ -65,10 +65,19 @@ class Board(object):
         return King.Black_King_Pos
 
     def update_valid_moves(self):
+        white_pos = self.get_white_king_pos()
+        black_pos = self.get_black_king_pos()
+        self.grid[white_pos[0]][white_pos[1]] = King(self.white_images[5], white_pos[0], white_pos[1], 0, self)
+        self.grid[black_pos[0]][black_pos[1]] = King(self.black_images[5], black_pos[0], black_pos[1], 1, self)
+        self.get(white_pos).steps_taken = King.White_King_Moves
+        self.get(black_pos).steps_taken = King.Black_King_Moves
         for row in self.grid:
             for piece in row:
                 if(piece != None):
                     piece.update_valid_moves()
+
+    def get(self, pos):
+        return self.grid[pos[0]][pos[1]]
 
     def white_in_check(self):
         for row in self.grid:
@@ -91,13 +100,29 @@ class Board(object):
         for move in piece.valid_moves:
             temp = self.grid[move[0]][move[1]]
             origin = [piece.row, piece.column]
-            piece.move(move[0], move[1], True)
+            piece.move(move[0], move[1], checking = True)
             if(self.kings_in_check()[piece.color]):
                 invalid_moves.append(move)
             piece.undo_move(origin[0], origin[1], temp)
             self.kings_in_check()[piece.color]
 
         return invalid_moves
+
+    def all_valid_moves(self, color_to_check):
+        moves = []
+        for row in self.grid:
+            for piece in row:
+                if(piece != None and piece.color == color_to_check):
+                    moves += piece.get_valid_moves()
+        return moves
+
+    def all_attack_moves(self, color_to_check):
+            moves = []
+            for row in self.grid:
+                for piece in row:
+                    if(piece != None and piece.color == color_to_check):
+                        moves += piece.get_attack_moves()
+            return moves
             
     def no_valid_moves(self, color_to_move):
         for row in self.grid:
