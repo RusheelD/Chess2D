@@ -227,3 +227,6 @@ class UI(object):
     def on_close(self):
         pyglet.app.exit()
     
+    def run(self):
+        pyglet.app.run()
+        self.game.store_history()
