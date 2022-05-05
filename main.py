@@ -2,7 +2,7 @@ import pyglet
 from GameMode import GameMode
 
 def main():
-    ui = GameMode().choose_mode()
+    ui = GameMode().choose_mode('S')
     pyglet.app.run()
     ui.game.store_history()
 

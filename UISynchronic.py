@@ -71,7 +71,7 @@ class UI(object):
             for col in range(len(self.game.main_board.grid[r])):
                 row = abs(7 * self.game.color_to_move - r)
                 column = abs(7 * self.game.color_to_move - col)
-                self.draw(r, col, row, column, game_over, stalemate, in_check)
+                self.draw(r, col, row, column, game_over, stalemate, in_check, self.game.main_board)
         
         if(self.turn_count < len(self.game.main_board.moves_made)):
             self.turn_count = len(self.game.main_board.moves_made)
@@ -95,11 +95,11 @@ class UI(object):
         checkmate = game_over[0] and not(stalemate)
         
 
-        for r in range(len(self.game.main_board.grid)):
-            for col in range(len(self.game.main_board.grid[r])):
+        for r in range(len(self.game.white_board.grid)):
+            for col in range(len(self.game.white_board.grid[r])):
                 row = abs(7 * 0 - r)
                 column = abs(7 * 0 - col)
-                self.draw(r, col, row, column, game_over, stalemate, in_check)
+                self.draw(r, col, row, column, game_over, stalemate, in_check, self.game.white_board)
         
         if(self.turn_count < len(self.game.main_board.moves_made)):
             self.turn_count = len(self.game.main_board.moves_made)
@@ -123,11 +123,11 @@ class UI(object):
         checkmate = game_over[0] and not(stalemate)
         
 
-        for r in range(len(self.game.main_board.grid)):
-            for col in range(len(self.game.main_board.grid[r])):
+        for r in range(len(self.game.black_board.grid)):
+            for col in range(len(self.game.black_board.grid[r])):
                 row = abs(7 * 1 - r)
                 column = abs(7 * 1 - col)
-                self.draw(r, col, row, column, game_over, stalemate, in_check)
+                self.draw(r, col, row, column, game_over, stalemate, in_check, self.game.black_board)
         
         if(self.turn_count < len(self.game.main_board.moves_made)):
             self.turn_count = len(self.game.main_board.moves_made)
@@ -143,15 +143,24 @@ class UI(object):
         else:
             self.game_over_frames = 0
 
-    def draw(self, r, col, row, column, game_over, stalemate, in_check):
-        piece = self.game.main_board.grid[row][column]
+    def draw(self, r, col, row, column, game_over, stalemate, in_check, board):
+        piece = board.grid[row][column]
+        if(board is self.game.white_board):
+            ips = self.game.is_piece_selected_white
+            sp = self.game.selected_piece_white
+        elif(board is self.game.black_board):
+            ips = self.game.is_piece_selected_black
+            sp = self.game.selected_piece_black
+        else:
+            ips = self.game.is_piece_selected
+            sp = self.game.selected_piece
 
-        if(self.game.is_piece_selected and self.game.selected_piece != None):
-            if([row, column] == [self.game.selected_piece.row, self.game.selected_piece.column]):
+        if(ips and sp != None and board.grid[sp.row][sp.column] != None):
+            if([row, column] == [sp.row, sp.column]):
                 self.background_select.blit(self.scale // 8 * col, self.scale // 8 * r)
-            elif([row, column] in self.game.main_board.grid[self.game.selected_piece.row][self.game.selected_piece.column].get_valid_moves() and row%2 == column%2):
+            elif([row, column] in board.grid[sp.row][sp.column].get_valid_moves() and row%2 == column%2):
                 self.background_option_dark.blit(self.scale // 8 * col, self.scale // 8 * r)
-            elif([row, column] in self.game.main_board.grid[self.game.selected_piece.row][self.game.selected_piece.column].get_valid_moves()):
+            elif([row, column] in board.grid[sp.row][sp.column].get_valid_moves()):
                 self.background_option_light.blit(self.scale // 8 * col, self.scale // 8 * r)
             elif(r%2 == col%2):
                 self.background_gray.blit(self.scale // 8 * col, self.scale // 8 * r)
@@ -163,11 +172,11 @@ class UI(object):
             self.background_white.blit(self.scale // 8 * col, self.scale // 8 * r)
         
         if(game_over[0]):
-            if((game_over[1] == 0 and [row, column] == self.game.main_board.get_white_king_pos()) or (game_over[1] == 1 and [row, column] == self.game.main_board.get_black_king_pos())):
+            if((game_over[1] == 0 and [row, column] == board.get_white_king_pos()) or (game_over[1] == 1 and [row, column] == board.get_black_king_pos())):
                 self.background_checkmate.blit(self.scale // 8 * col, self.scale // 8 * r)
-            elif(stalemate and ([row, column] == self.game.main_board.get_white_king_pos() or [row, column] == self.game.main_board.get_black_king_pos())):
+            elif(stalemate and ([row, column] == board.get_white_king_pos() or [row, column] == board.get_black_king_pos())):
                 self.background_stalemate.blit(self.scale // 8 * col, self.scale // 8 * r)
-        elif(in_check and ((self.game.color_to_move == 0 and [row, column] == self.game.main_board.get_white_king_pos()) or (self.game.color_to_move == 1 and [row, column] == self.game.main_board.get_black_king_pos()))):
+        elif(in_check and ((self.game.color_to_move == 0 and [row, column] == board.get_white_king_pos()) or (self.game.color_to_move == 1 and [row, column] == board.get_black_king_pos()))):
             self.background_check.blit(self.scale // 8 * col, self.scale // 8 * r)
 
         if piece != None:
@@ -191,10 +200,10 @@ class UI(object):
         col = int(x // (self.scale // 8))
         column = abs(7 * self.game.color_to_move - col)
 
-        self.game.select_tile(row, column, self.game.main_board)
+        self.game.select_tile(row, column, board=self.game.main_board)
 
     def mouse_press_white(self, x, y, button, modifiers):
-        if(self.game.color_to_move != 0):
+        if(self.game.white_moved == True):
             return pyglet.event.EVENT_HANDLED
         
         r = int(y // (self.scale // 8))
@@ -202,10 +211,10 @@ class UI(object):
         col = int(x // (self.scale // 8))
         column = col
 
-        self.game.select_tile(row, column, self.game.white_board)
+        self.game.select_tile(row, column, board=self.game.white_board)
 
     def mouse_press_black(self, x, y, button, modifiers):
-        if(self.game.color_to_move != 1):
+        if(self.game.black_moved == True):
             return pyglet.event.EVENT_HANDLED
         
         r = int(y // (self.scale // 8))
@@ -213,7 +222,7 @@ class UI(object):
         col = int(x // (self.scale // 8))
         column = abs(7 * 1 - col)
 
-        self.game.select_tile(row, column, self.game.black_board)
+        self.game.select_tile(row, column, board=self.game.black_board)
 
     def on_close(self):
         pyglet.app.exit()
