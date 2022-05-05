@@ -89,6 +89,8 @@ class MultiGameControl(GameControl):
                 self.is_piece_selected = False
                 self.selected_piece = None
                 board.update_valid_moves()
+                self.white_board.copy(self.main_board)
+                self.black_board.copy(self.main_board)
                 return self.selected_piece
 
             if(self.white_moved and self.black_moved):
