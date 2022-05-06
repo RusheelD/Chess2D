@@ -2,7 +2,9 @@ import pyglet
 
 # Creates the user experience for displaying the game over state
 class End(object):
+    active = False
     def __init__(self):
+        End.active = False
         self.color = 0
         self.pop_up = pyglet.window.Window(400, 200)
         self.pop_up.set_caption("Game over")
@@ -33,6 +35,7 @@ class End(object):
         self.mouse_clicked = True
     
     def stalemate(self):
+        End.active = True
         self.label_result = pyglet.text.Label('Stalemate! Draw!',
                                 font_name='Times New Roman',
                                 font_size=25,
@@ -57,6 +60,7 @@ class End(object):
         pyglet.app.exit()
 
     def checkmate(self, color = -1):
+        End.active = True
         self.color = color
         if(self.color == 1):
             self.label_result = pyglet.text.Label('Checkmate! White Wins!',

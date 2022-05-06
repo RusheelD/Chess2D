@@ -16,7 +16,7 @@ class UI(object):
         self.game = MultiGameControl()
     
     def make_windows(self):
-        self.window_main = pyglet.window.Window(self.scale , self.scale)
+        self.window_main = pyglet.window.Window(self.scale , self.scale, visible=False)
         self.window_main.set_caption("Chess Game - Main")
         self.window_main.set_location(550, 50)
         self.window_main.push_handlers(self)
@@ -50,9 +50,9 @@ class UI(object):
         stalemate = game_over[0] and game_over[1] == -1
         checkmate = game_over[0] and not(stalemate)
 
-        if(checkmate and self.game_over_frames >= 2):
+        if(checkmate and self.game_over_frames >= 2 and not End.active):
             End().checkmate(game_over[1])
-        if(stalemate and self.game_over_frames >= 2):
+        if(stalemate and self.game_over_frames >= 2 and not End.active):
             End().stalemate()
         
         self.window_main.dispatch_event('on_draw')
@@ -89,7 +89,7 @@ class UI(object):
 
     def draw_white(self):
         self.window_white.clear()
-        in_check = self.game.in_check()
+        in_check = self.game.in_check(0)
         game_over = self.game.is_game_over()
         stalemate = game_over[0] and game_over[1] == -1
         checkmate = game_over[0] and not(stalemate)
@@ -117,7 +117,7 @@ class UI(object):
 
     def draw_black(self):
         self.window_black.clear()
-        in_check = self.game.in_check()
+        in_check = self.game.in_check(1)
         game_over = self.game.is_game_over()
         stalemate = game_over[0] and game_over[1] == -1
         checkmate = game_over[0] and not(stalemate)

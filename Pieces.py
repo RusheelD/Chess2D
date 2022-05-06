@@ -94,7 +94,7 @@ class Pawn(Piece):
                 images = self.board.black_images
 
             self.board.grid[self.row][self.column] = None
-            if(choice == None):
+            if(choice == None and not Promote.active):
                 choice = Promote().promote(self.color)
             if(choice == "Queen"):
                 self.board.grid[row][column] = Queen(images[4], row, column, self.color, self.board)

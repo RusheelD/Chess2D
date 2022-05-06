@@ -15,7 +15,9 @@ Black_Rook_Image = pieces.get_region(800, 0, 200, 200)
 White_Rook_Image = pieces.get_region(800, 200, 200, 200)
 
 class Promote(object):
+    active = False
     def __init__(self):
+        Promote.active = False
         self.queens = [pyglet.sprite.Sprite(White_Queen_Image, 0, 0), pyglet.sprite.Sprite(Black_Queen_Image, 0, 0)]
         self.queens[0].scale = 0.5
         self.queens[1].scale = 0.5
@@ -93,6 +95,7 @@ class Promote(object):
         self.choices[0] = 1
 
     def promote(self, given_color = 0):
+        Promote.active = True
         self.color = given_color
         self.queens.pop(abs(self.color-1))
         self.rooks.pop(abs(self.color-1))
@@ -119,4 +122,5 @@ class Promote(object):
 
         for i in range(len(self.choices)):
             if self.choices[i] == 1:
+                Promote.active = False
                 return(self.pieces[i])

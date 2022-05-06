@@ -26,6 +26,21 @@ class MultiGameControl(GameControl):
         self.white_board.copy(self.main_board)
         self.black_board.copy(self.main_board)
 
+    def is_game_over(self):
+        if(self.black_board.no_valid_moves(1) or self.white_board.no_valid_moves(0)):
+            if(self.black_board.black_in_check()):
+                return [True, 1]
+            elif(self.white_board.white_in_check()):
+                return [True, 0]
+            else:
+                return [True, -1]
+        return [False, -1]
+
+    def in_check(self, color = -1):
+        if color == -1:
+            color = self.color_to_move
+        return self.main_board.kings_in_check()[color]
+
     def select_tile(self, row, column, choice=None, board: Board=None):
         if(board is self.white_board):
             self.chosen_color = 0
@@ -84,9 +99,11 @@ class MultiGameControl(GameControl):
             if(self.chosen_color == 0 and not self.white_moved):
                 self.white_move = [self.selected_piece_white, row, column]
                 self.white_moved = True
+                self.is_piece_selected_white = False
             elif(self.chosen_color == 1 and not self.black_moved):
                 self.black_move = [self.selected_piece_black, row, column]
                 self.black_moved = True
+                self.is_piece_selected_black = False
             else:
                 self.selected_piece.move(row, column)
                 self.color_to_move = abs(self.color_to_move - 1)
@@ -98,10 +115,10 @@ class MultiGameControl(GameControl):
             
             if(self.white_moved and self.black_moved):
 
-                if(self.in_check()[0]):
+                if(board.kings_in_check()[0]):
                     self.white_priority = 1
                     self.black_priority = 0
-                elif(self.in_check()[1]):
+                elif(board.kings_in_check()[1]):
                     self.black_priority = 1
                     self.white_priority = 0
                 
