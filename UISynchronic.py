@@ -148,12 +148,15 @@ class UI(object):
         if(board is self.game.white_board):
             ips = self.game.is_piece_selected_white
             sp = self.game.selected_piece_white
+            color = 0
         elif(board is self.game.black_board):
             ips = self.game.is_piece_selected_black
             sp = self.game.selected_piece_black
+            color = 1
         else:
             ips = self.game.is_piece_selected
             sp = self.game.selected_piece
+            color = self.game.color_to_move
 
         if(ips and sp != None and board.grid[sp.row][sp.column] != None):
             if([row, column] == [sp.row, sp.column]):
@@ -176,7 +179,7 @@ class UI(object):
                 self.background_checkmate.blit(self.scale // 8 * col, self.scale // 8 * r)
             elif(stalemate and ([row, column] == board.get_white_king_pos() or [row, column] == board.get_black_king_pos())):
                 self.background_stalemate.blit(self.scale // 8 * col, self.scale // 8 * r)
-        elif(in_check and ((self.game.color_to_move == 0 and [row, column] == board.get_white_king_pos()) or (self.game.color_to_move == 1 and [row, column] == board.get_black_king_pos()))):
+        elif((board.white_in_check() and [row, column] == board.get_white_king_pos()) or (board.black_in_check() and [row, column] == board.get_black_king_pos())):
             self.background_check.blit(self.scale // 8 * col, self.scale // 8 * r)
 
         if piece != None:
