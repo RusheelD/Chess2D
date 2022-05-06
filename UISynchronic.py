@@ -190,6 +190,8 @@ class UI(object):
             self.turn_count = len(self.game.main_board.moves_made)
             self.game_over_frames = 2
             pyglet.clock.schedule_once(self.call_draw, .1)
+        elif(symbol == pyglet.window.key.S):
+            self.game.sync_boards()
         else:
             return pyglet.event.EVENT_HANDLED
         

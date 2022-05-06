@@ -21,6 +21,10 @@ class MultiGameControl(GameControl):
         self.color_to_move = 0
         self.chosen_color = -1
         self.loaded = False
+    
+    def sync_boards(self):
+        self.white_board.copy(self.main_board)
+        self.black_board.copy(self.main_board)
 
     def select_tile(self, row, column, choice=None, board: Board=None):
         if(board is self.white_board):
@@ -30,7 +34,7 @@ class MultiGameControl(GameControl):
         else:
             board = self.main_board
             self.chosen_color = -1
-
+        
         if(board.grid[row][column] == None and 
                 ((not(self.is_piece_selected_white) and self.chosen_color==0) or 
                 (not(self.is_piece_selected_black) and self.chosen_color==1) or 
@@ -60,9 +64,9 @@ class MultiGameControl(GameControl):
                 self.is_piece_selected = True
                 self.selected_piece = self.main_board.grid[row][column]
 
-        elif((self.selected_piece and self.selected_piece.row == row and self.selected_piece.column == column) or 
-                (self.selected_piece_white and self.selected_piece_white.row == row and self.selected_piece_white.column == column) or 
-                (self.selected_piece_black and self.selected_piece_black.row == row and self.selected_piece_black.column == column)):
+        elif((self.selected_piece and self.selected_piece.row == row and self.selected_piece.column == column and self.chosen_color == -1) or 
+                (self.selected_piece_white and self.selected_piece_white.row == row and self.selected_piece_white.column == column and self.chosen_color == 0) or 
+                (self.selected_piece_black and self.selected_piece_black.row == row and self.selected_piece_black.column == column and self.chosen_color == 1)):
             if(self.chosen_color == 0):
                 self.is_piece_selected_white = False
                 self.selected_piece_white = None
@@ -72,11 +76,11 @@ class MultiGameControl(GameControl):
             else:
                 self.is_piece_selected = False
                 self.selected_piece = None
-
+        
         elif((self.selected_piece and self.chosen_color == -1 and [row, column] in self.selected_piece.get_valid_moves()) or 
-                (self.selected_piece_white and self.chosen_color == 0 and [row, column] in self.selected_piece_white.get_valid_moves()) or 
-                (self.selected_piece_black and self.chosen_color == 1 and [row, column] in self.selected_piece_black.get_valid_moves())):
-            # To Fix:
+                (self.selected_piece_white and self.chosen_color == 0 and [row, column] in board.grid[self.selected_piece_white.row][self.selected_piece_white.column].get_valid_moves()) or 
+                (self.selected_piece_black and self.chosen_color == 1 and [row, column] in board.grid[self.selected_piece_black.row][self.selected_piece_black.column].get_valid_moves())):
+
             if(self.chosen_color == 0 and not self.white_moved):
                 self.white_move = [self.selected_piece_white, row, column]
                 self.white_moved = True
@@ -89,10 +93,9 @@ class MultiGameControl(GameControl):
                 self.is_piece_selected = False
                 self.selected_piece = None
                 board.update_valid_moves()
-                self.white_board.copy(self.main_board)
-                self.black_board.copy(self.main_board)
+                self.sync_boards()
                 return self.selected_piece
-
+            
             if(self.white_moved and self.black_moved):
                 if(self.black_priority == self.white_prioirty):
                     if(self.white_move[0].speed > self.black_move[0].speed):
@@ -136,9 +139,7 @@ class MultiGameControl(GameControl):
                     else:
                         self.black_priority = 1
                 
-                self.white_board.copy(self.main_board)
-                self.black_board.copy(self.main_board)
-                print("copied")
+                self.sync_boards()
                 self.is_piece_selected_white = False
                 self.selected_piece_white = None
                 self.white_moved = False
@@ -150,8 +151,6 @@ class MultiGameControl(GameControl):
                 board.update_valid_moves()
                 return self.selected_piece
 
-            # End To fix
-
         elif(board.grid[row][column] != None and ((self.chosen_color != -1 and board.grid[row][column].color == self.chosen_color) or (board.grid[row][column].color == self.color_to_move and self.chosen_color == -1))):
             if(self.chosen_color == 0):
                 self.is_piece_selected_white = True
@@ -162,5 +161,4 @@ class MultiGameControl(GameControl):
             else:
                 self.is_piece_selected = True
                 self.selected_piece = self.main_board.grid[row][column]
-
         return self.selected_piece
