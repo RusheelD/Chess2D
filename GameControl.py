@@ -54,15 +54,16 @@ class GameControl(object):
         self.main_board = Board()
         with open("RecentGame.txt", 'r') as past_game:
             past_game_moves = past_game.read().split('\n')[:-1]
+            key = {'White': 0, 'Black': 1}
 
             if past_game_moves == []:
                 return False
 
+            self.color_to_move = abs(key[past_game_moves[-1].split()[1]] - 1)
+
             cols = "ABCDEFGH"
             for i in range(len(past_game_moves)):
                 past_game_moves[i] = past_game_moves[i][-5:]
-
-            self.color_to_move = 0
 
             for past_move in past_game_moves:
 
@@ -76,7 +77,6 @@ class GameControl(object):
                 column = cols.find(past_move_destination[0])
 
                 self.main_board.grid[origin_row][origin_column].move(row, column)
-                self.color_to_move = abs(self.color_to_move - 1)
 
                 self.loaded = True
 
