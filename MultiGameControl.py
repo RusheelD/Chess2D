@@ -97,6 +97,14 @@ class MultiGameControl(GameControl):
                 return self.selected_piece
             
             if(self.white_moved and self.black_moved):
+
+                if(self.in_check()[0]):
+                    self.white_priority = 1
+                    self.black_priority = 0
+                elif(self.in_check()[1]):
+                    self.black_priority = 1
+                    self.white_priority = 0
+                
                 if(self.black_priority == self.white_prioirty):
                     if(self.white_move[0].speed > self.black_move[0].speed):
                         self.white_move[0].move(self.white_move[1], self.white_move[2])
