@@ -187,3 +187,16 @@ class MultiGameControl(GameControl):
                 self.is_piece_selected = True
                 self.selected_piece = self.main_board.grid[row][column]
         return self.selected_piece
+
+    def store_history(self):
+        with open("RecentGameSynchronic.txt", 'w') as storage:
+            cols = "ABCDEFGH" 
+
+            for i in range(len(self.main_board.moves_made)):
+                storage.write(str(self.main_board.moves_made[i][0]) + " " + 
+                str(self.main_board.moves_made[i][1]) + "\t" + 
+                str(cols[self.main_board.moves_made[i][3]]) + 
+                str(self.main_board.moves_made[i][2] + 1) + " " + 
+                str(cols[self.main_board.moves_made[i][5]]) + 
+                str(self.main_board.moves_made[i][4] + 1))
+                storage.write("\n")

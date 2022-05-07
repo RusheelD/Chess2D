@@ -4,7 +4,7 @@ from End import End
 
 class UI(object):
     def __init__(self):
-        self.scale = 400
+        self.scale = 600
         self.set_backgrounds()
 
         self.make_windows()
@@ -30,7 +30,7 @@ class UI(object):
 
         self.window_black = pyglet.window.Window(self.scale , self.scale)
         self.window_black.set_caption("Chess Game - Black")
-        self.window_black.set_location(1000, 50)
+        self.window_black.set_location(750, 50)
         self.window_black.push_handlers(self)
         self.window_black.set_handler("on_mouse_press", self.mouse_press_black)
         self.window_black.set_handler("on_draw", self.draw_black)
