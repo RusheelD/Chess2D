@@ -15,8 +15,8 @@ class Piece(object):
         self.valid_moves = []
         self.steps_taken = 0
         self.temp2 = None
-        self.value = piece_data[type(self)]['value']
-        self.speed = piece_data[type(self)]['speed']
+        self.value = piece_data[type(self)]['value'] if(type(self) in piece_data) else 0
+        self.speed = piece_data[type(self)]['speed'] if(type(self) in piece_data) else 0
 
     def update_valid_moves(self):
         self.valid_moves = self.get_valid_moves()
@@ -319,84 +319,12 @@ class Knight(Piece):
 
         return self.valid_moves
 
-
-class Queen(Piece):
+class Queen(Rook, Bishop):
     def calculate_valid_moves(self):
         self.valid_moves = []
 
-        min_row = self.row
-        max_row = 7 - self.row
-        min_col = self.column
-        max_col = 7 - self.column
-
-        max_UR = min(max_row, max_col)
-        max_UL = min(max_row, min_col)
-        max_DR = min(min_row, max_col)
-        max_DL = min(min_row, min_col)
-
-        for n in range(1, max_UR + 1):
-            check = self.board.grid[self.row + n][self.column + n]
-            if(check != None):
-                if(check.color != self.color):
-                    self.valid_moves.append([self.row + n, self.column + n])
-                break
-            self.valid_moves.append([self.row + n, self.column + n])
-
-        for n in range(1, max_UL + 1):
-            check = self.board.grid[self.row + n][self.column - n]
-            if(check != None):
-                if(check.color != self.color):
-                    self.valid_moves.append([self.row + n, self.column - n])
-                break
-            self.valid_moves.append([self.row + n, self.column - n])
-
-        for n in range(1, max_DR + 1):
-            check = self.board.grid[self.row - n][self.column + n]
-            if(check != None):
-                if(check.color != self.color):
-                    self.valid_moves.append([self.row - n, self.column + n])
-                break
-            self.valid_moves.append([self.row - n, self.column + n])
-
-        for n in range(1, max_DL + 1):
-            check = self.board.grid[self.row - n][self.column - n]
-            if(check != None):
-                if(check.color != self.color):
-                    self.valid_moves.append([self.row - n, self.column - n])
-                break
-            self.valid_moves.append([self.row - n, self.column - n])
-
-        for i in range(self.column + 1, 8):
-            check = self.board.grid[self.row][i]
-            if(check != None):
-                if(check.color != self.color):
-                    self.valid_moves.append([self.row, i])
-                break
-            self.valid_moves.append([self.row, i])
-
-        for i in range(self.column - 1, -1, -1):
-            check = self.board.grid[self.row][i]
-            if(check != None):
-                if(check.color != self.color):
-                    self.valid_moves.append([self.row, i])
-                break
-            self.valid_moves.append([self.row, i])
-
-        for i in range(self.row + 1, 8):
-            check = self.board.grid[i][self.column]
-            if(check != None):
-                if(check.color != self.color):
-                    self.valid_moves.append([i, self.column])
-                break
-            self.valid_moves.append([i, self.column])
-
-        for i in range(self.row - 1, -1, -1):
-            check = self.board.grid[i][self.column]
-            if(check != None):
-                if(check.color != self.color):
-                    self.valid_moves.append([i, self.column])
-                break
-            self.valid_moves.append([i, self.column])
+        self.valid_moves += Rook.calculate_valid_moves(self)
+        self.valid_moves += Bishop.calculate_valid_moves(self)
         
         return self.valid_moves
 
