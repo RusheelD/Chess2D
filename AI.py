@@ -74,7 +74,7 @@ class AI(object):
             elif(score == best_score):
                 best_pieces.append([[piece, move], attributes])
         choice = random.choice(best_pieces)
-        print(choice, best_score)
+        # print(choice, best_score)
         return choice[0]
     
     def get_best_open_move(self, piece):
