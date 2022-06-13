@@ -228,8 +228,7 @@ class AI(object):
                     else:
                         attack = temp.value - (piece.value - 1)
                 else:
-                    if(temp.value > piece.value):
-                        attack = 8 * temp.value
+                    attack = 8 * temp.value
 
             if(danger > 0):
                 danger = 5 + piece.value
