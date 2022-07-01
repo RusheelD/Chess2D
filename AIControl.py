@@ -32,10 +32,6 @@ class AIControl(GameControl):
             self.is_piece_selected = False
             self.selected_piece = None
             self.main_board.update_valid_moves()
-            # if(not(self.is_game_over()[0]) and self.AI_enabled):
-            #     # self.updateAI()
-            #     pyglet.clock.schedule_once(self.updateAI, .001)
-            #     # print('something')
 
         elif(self.main_board.grid[row][column] != None and self.main_board.grid[row][column].color == self.selected_piece.color):
             self.is_piece_selected = True

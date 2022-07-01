@@ -42,6 +42,9 @@ class UI(object):
             self.end_signaled = True
             End().stalemate()
         
+        if(not(game_over) and self.game.AI_enabled):
+            pyglet.clock.schedule_once(self.game.updateAI, .25)
+        
         self.window.dispatch_event('on_draw')
 
     def on_draw(self):
@@ -87,10 +90,6 @@ class UI(object):
                     temp_sprite.scale = 0.5 * (self.scale / 800)
                     temp_sprite.draw()
 
-        if(not(self.game.is_game_over()[0]) and self.game.AI_enabled):
-                # self.updateAI()
-                pyglet.clock.schedule_once(self.game.updateAI, .001)
-                # print('something')
 
         if(self.turn_count < len(self.game.main_board.moves_made)):
             self.turn_count = len(self.game.main_board.moves_made)
