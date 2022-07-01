@@ -51,16 +51,18 @@ class Piece(object):
                 continue
     
     def move(self, row, column, checking = False, choice = None):
-        self.board.grid[self.row][self.column] = None
-        self.board.grid[row][column] = self
         origin_row = self.row
         origin_column = self.column
-        self.row = row
-        self.column = column
         if(checking == False):
             self.steps_taken += 1
             self.board.moves_made.append([self.board.current_turn, self, origin_row, origin_column, row, column])
             self.board.current_turn += self.color
+            if(self.board.grid[row][column] != None):
+                self.board.pieces.remove(self.board.grid[row][column])
+        self.board.grid[self.row][self.column] = None
+        self.board.grid[row][column] = self
+        self.row = row
+        self.column = column
 
     def undo_move(self, row, column, temp):
         self.board.grid[row][column] = self

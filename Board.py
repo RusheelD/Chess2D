@@ -4,20 +4,20 @@ from Pieces import *
 class Board(object):
     
     def __init__(self):
-        pieces = pyglet.image.load('Pieces-Images.png')
+        pieces_images = pyglet.image.load('Pieces-Images.png')
 
-        Black_King_Image = pieces.get_region(0, 0, 200, 200)
-        White_King_Image = pieces.get_region(0, 200, 200, 200)
-        Black_Queen_Image = pieces.get_region(200, 0, 200, 200)
-        White_Queen_Image = pieces.get_region(200, 200, 200, 200)
-        Black_Bishop_Image = pieces.get_region(400, 0, 200, 200)
-        White_Bishop_Image = pieces.get_region(400, 200, 200, 200)
-        Black_Knight_Image = pieces.get_region(600, 0, 200, 200)
-        White_Knight_Image = pieces.get_region(600, 200, 200, 200)
-        Black_Rook_Image = pieces.get_region(800, 0, 200, 200)
-        White_Rook_Image = pieces.get_region(800, 200, 200, 200)
-        Black_Pawn_Image = pieces.get_region(1000, 0, 200, 200)
-        White_Pawn_Image = pieces.get_region(1000, 200, 200, 200)
+        Black_King_Image = pieces_images.get_region(0, 0, 200, 200)
+        White_King_Image = pieces_images.get_region(0, 200, 200, 200)
+        Black_Queen_Image = pieces_images.get_region(200, 0, 200, 200)
+        White_Queen_Image = pieces_images.get_region(200, 200, 200, 200)
+        Black_Bishop_Image = pieces_images.get_region(400, 0, 200, 200)
+        White_Bishop_Image = pieces_images.get_region(400, 200, 200, 200)
+        Black_Knight_Image = pieces_images.get_region(600, 0, 200, 200)
+        White_Knight_Image = pieces_images.get_region(600, 200, 200, 200)
+        Black_Rook_Image = pieces_images.get_region(800, 0, 200, 200)
+        White_Rook_Image = pieces_images.get_region(800, 200, 200, 200)
+        Black_Pawn_Image = pieces_images.get_region(1000, 0, 200, 200)
+        White_Pawn_Image = pieces_images.get_region(1000, 200, 200, 200)
 
         self.black_images = [Black_Pawn_Image, Black_Rook_Image, Black_Knight_Image, 
         Black_Bishop_Image, Black_Queen_Image, Black_King_Image]
@@ -27,26 +27,31 @@ class Board(object):
 
         self.current_turn = 1
         self.moves_made = []
-        self.grid = [[Rook(self.white_images[1], 0, 0, 0, self), Knight(self.white_images[2], 0, 1, 0, self), 
+        self.pieces = [Rook(self.white_images[1], 0, 0, 0, self), Knight(self.white_images[2], 0, 1, 0, self), 
         Bishop(self.white_images[3], 0, 2, 0, self), Queen(self.white_images[4], 0, 3, 0, self), 
         King(self.white_images[5], 0, 4, 0, self), Bishop(self.white_images[3], 0, 5, 0, self), 
-        Knight(self.white_images[2], 0, 6, 0, self), Rook(self.white_images[1], 0, 7, 0, self)], 
-        [Pawn(self.white_images[0], 1, 0, 0, self), Pawn(self.white_images[0], 1, 1, 0, self), 
+        Knight(self.white_images[2], 0, 6, 0, self), Rook(self.white_images[1], 0, 7, 0, self), 
+        Pawn(self.white_images[0], 1, 0, 0, self), Pawn(self.white_images[0], 1, 1, 0, self), 
         Pawn(self.white_images[0], 1, 2, 0, self), Pawn(self.white_images[0], 1, 3, 0, self), 
         Pawn(self.white_images[0], 1, 4, 0, self), Pawn(self.white_images[0], 1, 5, 0, self), 
-        Pawn(self.white_images[0], 1, 6, 0, self), Pawn(self.white_images[0], 1, 7, 0, self)], 
-        [None, None, None, None, None, None, None, None], 
-        [None, None, None, None, None, None, None, None], 
-        [None, None, None, None, None, None, None, None], 
-        [None, None, None, None, None, None, None, None], 
-        [Pawn(self.black_images[0], 6, 0, 1, self), Pawn(self.black_images[0], 6, 1, 1, self), 
+        Pawn(self.white_images[0], 1, 6, 0, self), Pawn(self.white_images[0], 1, 7, 0, self), 
+        Pawn(self.black_images[0], 6, 0, 1, self), Pawn(self.black_images[0], 6, 1, 1, self), 
         Pawn(self.black_images[0], 6, 2, 1, self), Pawn(self.black_images[0], 6, 3, 1, self), 
         Pawn(self.black_images[0], 6, 4, 1, self), Pawn(self.black_images[0], 6, 5, 1, self), 
-        Pawn(self.black_images[0], 6, 6, 1, self), Pawn(self.black_images[0], 6, 7, 1, self)], 
-        [Rook(self.black_images[1], 7, 0, 1, self), Knight(self.black_images[2], 7, 1, 1, self), 
+        Pawn(self.black_images[0], 6, 6, 1, self), Pawn(self.black_images[0], 6, 7, 1, self), 
+        Rook(self.black_images[1], 7, 0, 1, self), Knight(self.black_images[2], 7, 1, 1, self), 
         Bishop(self.black_images[3], 7, 2, 1, self), Queen(self.black_images[4], 7, 3, 1, self), 
         King(self.black_images[5], 7, 4, 1, self), Bishop(self.black_images[3], 7, 5, 1, self), 
-        Knight(self.black_images[2], 7, 6, 1, self), Rook(self.black_images[1], 7, 7, 1, self)]]
+        Knight(self.black_images[2], 7, 6, 1, self), Rook(self.black_images[1], 7, 7, 1, self)]
+        self.grid = [[None, None, None, None, None, None, None, None], 
+        [None, None, None, None, None, None, None, None], 
+        [None, None, None, None, None, None, None, None], 
+        [None, None, None, None, None, None, None, None], 
+        [None, None, None, None, None, None, None, None], 
+        [None, None, None, None, None, None, None, None], 
+        [None, None, None, None, None, None, None, None], 
+        [None, None, None, None, None, None, None, None]]
+        self.refresh_pieces()
 
     def __str__(self):
         string = ""
@@ -58,6 +63,10 @@ class Board(object):
             string += "\n"
         return string
     
+    def refresh_pieces(self):
+        for piece in self.pieces:
+            self.grid[piece.row][piece.column] = piece
+
     def copy(self, board):
         self.grid = board.grid
 
@@ -78,6 +87,7 @@ class Board(object):
             for piece in row:
                 if(piece != None):
                     piece.update_valid_moves()
+        self.refresh_pieces()
 
     def get(self, pos):
         return self.grid[pos[0]][pos[1]]
@@ -108,7 +118,7 @@ class Board(object):
                 invalid_moves.append(move)
             piece.undo_move(origin[0], origin[1], temp)
             self.kings_in_check()[piece.color]
-
+        self.refresh_pieces()
         return invalid_moves
 
     def all_valid_moves(self, color_to_check):
