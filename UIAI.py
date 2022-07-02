@@ -42,7 +42,7 @@ class UI(object):
             self.end_signaled = True
             End().stalemate()
         
-        if(not(game_over) and self.game.AI_enabled):
+        if(not(game_over[0]) and self.game.AI_enabled):
             pyglet.clock.schedule_once(self.game.updateAI, .25)
         
         self.window.dispatch_event('on_draw')
