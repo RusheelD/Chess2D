@@ -15,6 +15,7 @@ class Piece(object):
         self.valid_moves = []
         self.steps_taken = 0
         self.temp2 = None
+        self.replacement = None
         self.value = piece_data[type(self)]['value'] if(type(self) in piece_data) else 0
         self.speed = piece_data[type(self)]['speed'] if(type(self) in piece_data) else 0
 
@@ -51,12 +52,13 @@ class Piece(object):
     def move(self, row, column, checking = False, choice = None):
         origin_row = self.row
         origin_column = self.column
+        self.replacement = self.board.grid[row][column]
         if(checking == False):
             self.steps_taken += 1
             self.board.moves_made.append([self.board.current_turn, self, origin_row, origin_column, row, column])
             self.board.current_turn += self.color
-            if(self.board.grid[row][column] != None):
-                self.board.pieces.remove(self.board.grid[row][column])
+        if(self.board.grid[row][column] in self.board.pieces):
+            self.board.pieces.remove(self.board.grid[row][column])
         self.board.grid[self.row][self.column] = None
         self.board.grid[row][column] = self
         self.row = row
@@ -65,6 +67,9 @@ class Piece(object):
     def undo_move(self, row, column, temp):
         self.board.grid[row][column] = self
         self.board.grid[self.row][self.column] = temp
+        if(self.replacement != None):
+            self.board.pieces.append(self.replacement)
+            self.replacement = None
         self.row = row
         self.column = column
 
