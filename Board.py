@@ -83,26 +83,22 @@ class Board(object):
         self.grid[black_pos[0]][black_pos[1]] = King(self.black_images[5], black_pos[0], black_pos[1], 1, self)
         self.get(white_pos).steps_taken = King.White_King_Moves
         self.get(black_pos).steps_taken = King.Black_King_Moves
-        for row in self.grid:
-            for piece in row:
-                if(piece != None):
-                    piece.update_valid_moves()
+        for piece in self.pieces:
+            piece.update_valid_moves()
         self.refresh_pieces()
 
     def get(self, pos):
         return self.grid[pos[0]][pos[1]]
 
     def white_in_check(self):
-        for row in self.grid:
-            for piece in row:
-                if(piece != None and piece.color == 1 and King.White_King_Pos in piece.get_attack_moves()):
-                    return True
+        for piece in self.pieces:
+            if(piece.color == 1 and King.White_King_Pos in piece.get_attack_moves()):
+                return True
 
     def black_in_check(self):
-        for row in self.grid:
-            for piece in row:
-                if(piece != None and piece.color == 0 and King.Black_King_Pos in piece.get_attack_moves()):
-                    return True
+        for piece in self.pieces:
+            if(piece.color == 0 and King.Black_King_Pos in piece.get_attack_moves()):
+                return True
 
     def kings_in_check(self):
         checks = [self.white_in_check(), self.black_in_check()]
@@ -123,24 +119,21 @@ class Board(object):
 
     def all_valid_moves(self, color_to_check):
         moves = []
-        for row in self.grid:
-            for piece in row:
-                if(piece != None and piece.color == color_to_check):
-                    moves += piece.get_valid_moves()
+        for piece in self.pieces:
+            if(piece.color == color_to_check):
+                moves += piece.get_valid_moves()
         return moves
 
     def all_attack_moves(self, color_to_check):
             moves = []
-            for row in self.grid:
-                for piece in row:
-                    if(piece != None and piece.color == color_to_check):
-                        moves += piece.get_attack_moves()
+            for piece in self.pieces:
+                if(piece.color == color_to_check):
+                    moves += piece.get_attack_moves()
             return moves
             
     def no_valid_moves(self, color_to_move):
-        for row in self.grid:
-            for piece in row:
-                if(piece != None and piece.color == color_to_move and len(piece.get_valid_moves()) > 0):
-                    return False   
+        for piece in self.pieces:
+            if(piece.color == color_to_move and len(piece.get_valid_moves()) > 0):
+                return False   
         return True
     

@@ -45,10 +45,8 @@ class Piece(object):
         invalid_moves = self.board.get_invalid_moves(self)
 
         for move in invalid_moves:
-            try:
+            if(move in self.valid_moves):
                 self.valid_moves.remove(move)
-            except ValueError:
-                continue
     
     def move(self, row, column, checking = False, choice = None):
         origin_row = self.row
@@ -312,10 +310,8 @@ class Knight(Piece):
                     remove.append(move)
                 
         for move in remove:
-            try:
+            if(move in potential_moves):
                 potential_moves.remove(move)
-            except ValueError:
-                continue
         
         self.valid_moves = potential_moves
 
@@ -337,16 +333,14 @@ class King(Piece):
     Black_King_Pos = [7, 4]
 
     def white_in_check(self):
-        for row in self.board.grid:
-            for piece in row:
-                if(piece != None and piece.color == 1 and King.White_King_Pos in piece.get_attack_moves()):
-                    return True
+        for piece in self.board.pieces:
+            if(piece.color == 1 and King.White_King_Pos in piece.get_attack_moves()):
+                return True
 
     def black_in_check(self):
-        for row in self.board.grid:
-            for piece in row:
-                if(piece != None and piece.color == 0 and King.Black_King_Pos in piece.get_attack_moves()):
-                    return True
+        for piece in self.board.pieces:
+            if(piece.color == 0 and King.Black_King_Pos in piece.get_attack_moves()):
+                return True
 
     def move(self, row, column, checking = False, choice = None):
         if(abs(column - self.column) == 2):
@@ -537,55 +531,42 @@ class King(Piece):
                 if(self.board.grid[7][5] == None and self.board.grid[7][6] == None):
                     self.valid_moves.append([7, 6])
 
-        for row in self.board.grid:
-            for piece in row:
-                if piece != None and piece.color != self.color:
-                    if type(piece) != King:
-                        remove = []
-                        for move in self.valid_moves:
-                            if move in piece.get_attack_moves():
-                                remove.append(move)
-                            if abs(move[1] - self.column) == 2 and [self.row, self.column] in piece.get_attack_moves():
-                                remove.append(move)
-                        for move in remove:
-                            try:
-                                self.valid_moves.remove(move)
-                            except ValueError:
-                                continue
-                    else:
-                        remove = []
-                        for move in self.valid_moves:
-                            if(abs(move[0] - piece.row) <= 1 and abs(move[1] - piece.column) <= 1):
-                                remove.append(move)
-                        for move in remove:
-                            try:
-                                self.valid_moves.remove(move)
-                            except ValueError:
-                                continue
-                     
+        for piece in self.board.pieces:
+            if piece.color != self.color:
+                if type(piece) != King:
+                    remove = []
+                    for move in self.valid_moves:
+                        if move in piece.get_attack_moves():
+                            remove.append(move)
+                        if abs(move[1] - self.column) == 2 and [self.row, self.column] in piece.get_attack_moves():
+                            remove.append(move)
+                    for move in remove:
+                        if(move in self.valid_moves):
+                            self.valid_moves.remove(move)
+                else:
+                    remove = []
+                    for move in self.valid_moves:
+                        if(abs(move[0] - piece.row) <= 1 and abs(move[1] - piece.column) <= 1):
+                            remove.append(move)
+                    for move in remove:
+                        if(move in self.valid_moves):
+                            self.valid_moves.remove(move)
+                    
         for move in self.valid_moves:
             if self.column == 4:
                 if self.color == 0:
                     if move == [0, 2] and not([0, 3] in self.valid_moves):
-                        try:
+                        if(move in self.valid_moves):
                             self.valid_moves.remove(move)
-                        except ValueError:
-                            continue
                     if move == [0, 6] and not([0, 5] in self.valid_moves):
-                        try:
+                        if(move in self.valid_moves):
                             self.valid_moves.remove(move)
-                        except ValueError:
-                            continue
                 if self.color == 1:
                     if move == [7, 2] and not([7, 3] in self.valid_moves):
-                        try:
+                        if(move in self.valid_moves):
                             self.valid_moves.remove(move)
-                        except ValueError:
-                            continue
                     if move == [7, 6] and not([7, 5] in self.valid_moves):
-                        try:
+                        if(move in self.valid_moves):
                             self.valid_moves.remove(move)
-                        except ValueError:
-                            continue
         
         return self.valid_moves

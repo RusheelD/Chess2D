@@ -31,18 +31,19 @@ class UI(object):
         self.background_stalemate = pyglet.image.SolidColorImagePattern((0, 0, 255, 255)).create_image(self.scale // 8, self.scale // 8)
 
     def call_draw(self, dt):
-        game_over = self.game.is_game_over()
-        stalemate = game_over[0] and game_over[1] == -1
-        checkmate = game_over[0] and not(stalemate)
+        game_over_stats = self.game.is_game_over()
+        game_over = game_over_stats[0]
+        stalemate = game_over and game_over_stats[1] == -1
+        checkmate = game_over and not(stalemate)
 
         if(checkmate and self.game_over_frames >= 2) and not(self.end_signaled):
             self.end_signaled = True
-            End().checkmate(game_over[1])
+            End().checkmate(game_over_stats[1])
         if(stalemate and self.game_over_frames >= 2) and not(self.end_signaled):
             self.end_signaled = True
             End().stalemate()
         
-        if(not(game_over[0]) and self.game.AI_enabled):
+        if(not(game_over) and self.game.AI_enabled):
             pyglet.clock.schedule_once(self.game.updateAI, .25)
         
         self.window.dispatch_event('on_draw')
