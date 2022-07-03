@@ -69,6 +69,7 @@ class Board(object):
 
     def copy(self, board):
         self.grid = board.grid
+        self.pieces = board.pieces
 
     def get_white_king_pos(self):
         return King.White_King_Pos

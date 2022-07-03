@@ -307,9 +307,9 @@ class Knight(Piece):
         
         for i in range(len(potential_moves)):
             move = potential_moves[i]
-            try:
+            if(0 <= move[0] <= 7 and 0 <= move[1] <= 7):
                 check = self.board.grid[move[0]][move[1]]
-            except IndexError:
+            else:
                 check = None
             if(check != None and check.color == self.color):
                     remove.append(move)

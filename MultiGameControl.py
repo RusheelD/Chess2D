@@ -105,6 +105,7 @@ class MultiGameControl(GameControl):
                 self.black_moved = True
                 self.is_piece_selected_black = False
             else:
+                self.recent_move = [[self.selected_piece.row, self.selected_piece.column], [row, column]]
                 self.selected_piece.move(row, column)
                 self.color_to_move = abs(self.color_to_move - 1)
                 self.is_piece_selected = False
@@ -124,14 +125,18 @@ class MultiGameControl(GameControl):
                 
                 if(self.black_priority == self.white_prioirty):
                     if(self.white_move[0].speed > self.black_move[0].speed):
+                        self.recent_move = [[self.white_move[0].row, self.white_move[0].column], [self.white_move[1], self.white_move[2]]]
                         self.white_move[0].move(self.white_move[1], self.white_move[2])
                         if(self.main_board.grid[self.black_move[0].row][self.black_move[0].column] == self.black_move[0] and ([self.black_move[1], self.black_move[2]] in self.black_move[0].get_valid_moves())):
+                            self.recent_move += [[self.black_move[0].row, self.black_move[0].column], [self.black_move[1], self.black_move[2]]]
                             self.black_move[0].move(self.black_move[1], self.black_move[2])
                         else:
                             self.black_priority = 1
                     elif(self.white_move[0].speed < self.black_move[0].speed):
+                        self.recent_move = [[self.black_move[0].row, self.black_move[0].column], [self.black_move[1], self.black_move[2]]]
                         self.black_move[0].move(self.black_move[1], self.black_move[2])
                         if(self.main_board.grid[self.white_move[0].row][self.white_move[0].column] == self.white_move[0] and ([self.white_move[1], self.white_move[2]] in self.white_move[0].get_valid_moves())):
+                            self.recent_move += [[self.white_move[0].row, self.white_move[0].column], [self.white_move[1], self.white_move[2]]]
                             self.white_move[0].move(self.white_move[1], self.white_move[2])
                         else:
                             self.white_priority = 1
@@ -142,24 +147,30 @@ class MultiGameControl(GameControl):
                         else:
                             second = self.white_move
                         
+                        self.recent_move = [[first[0].row, first[0].column], [first[1], first[2]]]
                         first[0].move(first[1], first[2])
                         if(self.main_board.grid[second[0].row][second[0].column] == second[0] and ([second[1], second[2]] in second[0].get_valid_moves())):
+                            self.recent_move += [[second[0].row, second[0].column], [second[1], second[2]]]
                             second[0].move(second[1], second[2])
                         elif(second == self.white_move):
                             self.white_prioirty = 1
                         else:
                             self.black_priority = 1
                 elif(self.black_priority > self.white_prioirty):
+                    self.recent_move = [[self.black_move[0].row, self.black_move[0].column], [self.black_move[1], self.black_move[2]]]
                     self.black_move[0].move(self.black_move[1], self.black_move[2])
                     self.black_priority = 0
                     if(self.main_board.grid[self.white_move[0].row][self.white_move[0].column] == self.white_move[0] and ([self.white_move[1], self.white_move[2]] in self.white_move[0].get_valid_moves())):
+                        self.recent_move += [[self.white_move[0].row, self.white_move[0].column], [self.white_move[1], self.white_move[2]]]
                         self.white_move[0].move(self.white_move[1], self.white_move[2])
                     else:
                         self.white_priority = 1
                 else:
+                    self.recent_move = [[self.white_move[0].row, self.white_move[0].column], [self.white_move[1], self.white_move[2]]]
                     self.white_move[0].move(self.white_move[1], self.white_move[2])
                     self.white_priority = 0
                     if(self.main_board.grid[self.black_move[0].row][self.black_move[0].column] == self.black_move[0] and ([self.black_move[1], self.black_move[2]] in self.black_move[0].get_valid_moves())):
+                        self.recent_move += [[self.black_move[0].row, self.black_move[0].column], [self.black_move[1], self.black_move[2]]]
                         self.black_move[0].move(self.black_move[1], self.black_move[2])
                     else:
                         self.black_priority = 1

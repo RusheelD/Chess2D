@@ -29,6 +29,8 @@ class UI(object):
         self.background_check = pyglet.image.SolidColorImagePattern((255, 0, 0, 255)).create_image(self.scale // 8, self.scale // 8)
         self.background_checkmate = pyglet.image.SolidColorImagePattern((150, 0, 0, 255)).create_image(self.scale // 8, self.scale // 8)
         self.background_stalemate = pyglet.image.SolidColorImagePattern((0, 0, 255, 255)).create_image(self.scale // 8, self.scale // 8)
+        self.background_recent_light = pyglet.image.SolidColorImagePattern((125, 125, 255, 255)).create_image(self.scale // 8, self.scale // 8)
+        self.background_recent_dark = pyglet.image.SolidColorImagePattern((75, 75, 255, 255)).create_image(self.scale // 8, self.scale // 8)
 
     def call_draw(self, dt):
         game_over_stats = self.game.is_game_over()
@@ -69,10 +71,18 @@ class UI(object):
                         self.background_option_dark.blit(self.scale // 8 * col, self.scale // 8 * r)
                     elif([row, column] in self.game.main_board.grid[self.game.selected_piece.row][self.game.selected_piece.column].get_valid_moves()):
                         self.background_option_light.blit(self.scale // 8 * col, self.scale // 8 * r)
+                    elif([row, column] in self.game.recent_move and r%2==col%2):
+                        self.background_recent_dark.blit(self.scale // 8 * col, self.scale // 8 * r)
+                    elif([row, column] in self.game.recent_move):
+                        self.background_recent_light.blit(self.scale // 8 * col, self.scale // 8 * r)
                     elif(r%2 == col%2):
                         self.background_gray.blit(self.scale // 8 * col, self.scale // 8 * r)
                     else:
                         self.background_white.blit(self.scale // 8 * col, self.scale // 8 * r)
+                elif([row, column] in self.game.recent_move and r%2==col%2):
+                    self.background_recent_dark.blit(self.scale // 8 * col, self.scale // 8 * r)
+                elif([row, column] in self.game.recent_move):
+                    self.background_recent_light.blit(self.scale // 8 * col, self.scale // 8 * r)
                 elif(r%2 == col%2):
                     self.background_gray.blit(self.scale // 8 * col, self.scale // 8 * r)
                 else:
