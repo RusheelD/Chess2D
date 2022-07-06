@@ -4,7 +4,7 @@ from End import End
 
 class UI(object):
     def __init__(self, AI_color):
-        self.scale = 800
+        self.scale = 600
         self.set_backgrounds()
 
         self.window = pyglet.window.Window(self.scale , self.scale)

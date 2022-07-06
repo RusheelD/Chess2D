@@ -23,6 +23,9 @@ class Piece(object):
         self.valid_moves = self.get_valid_moves()
         self.refine_valid_moves()
 
+    def copy(self):
+        return type(self)(self.image, self.row, self.column, self.color, self.board)
+
     def refine_valid_moves(self):
         seen = []
         for move in self.valid_moves:
@@ -63,6 +66,7 @@ class Piece(object):
         self.board.grid[row][column] = self
         self.row = row
         self.column = column
+        self.board.refresh_pieces()
 
     def undo_move(self, row, column, temp):
         self.board.grid[row][column] = self

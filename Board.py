@@ -51,6 +51,8 @@ class Board(object):
         [None, None, None, None, None, None, None, None], 
         [None, None, None, None, None, None, None, None], 
         [None, None, None, None, None, None, None, None]]
+        self.black_pieces = []
+        self.white_pieces = []
         self.refresh_pieces()
 
     def __str__(self):
@@ -64,12 +66,33 @@ class Board(object):
         return string
     
     def refresh_pieces(self):
+        for row in self.grid:
+            for piece in row:
+                piece = None
+        self.black_pieces.clear()
+        self.white_pieces.clear()
         for piece in self.pieces:
             self.grid[piece.row][piece.column] = piece
+            if(piece.color == 1):
+                self.black_pieces.append(piece)
+            else:
+                self.white_pieces.append(piece)
 
     def copy(self, board):
         self.grid = board.grid
         self.pieces = board.pieces
+
+    def deep_copy(self, board):
+        self.pieces.clear()
+        for row in range(len(board.grid)):
+            for column in range(len(row)):
+                if(board.grid[row][column] != None):
+                    self.grid[row][column] = board.grid[row][column].copy()
+                    self.pieces.append(self.grid[row][column])
+                    self.refresh_pieces()
+                else:
+                    self.grid[row][column] = None
+        self.refresh_pieces()
 
     def get_white_king_pos(self):
         return King.White_King_Pos
