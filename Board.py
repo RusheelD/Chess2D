@@ -101,12 +101,7 @@ class Board(object):
         return King.Black_King_Pos
 
     def update_valid_moves(self):
-        white_pos = self.get_white_king_pos()
-        black_pos = self.get_black_king_pos()
-        self.grid[white_pos[0]][white_pos[1]] = King(self.white_images[5], white_pos[0], white_pos[1], 0, self)
-        self.grid[black_pos[0]][black_pos[1]] = King(self.black_images[5], black_pos[0], black_pos[1], 1, self)
-        self.get(white_pos).steps_taken = King.White_King_Moves
-        self.get(black_pos).steps_taken = King.Black_King_Moves
+        self.refresh_pieces()
         for piece in self.pieces:
             piece.update_valid_moves()
         self.refresh_pieces()
