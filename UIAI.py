@@ -64,7 +64,7 @@ class UI(object):
                 column = abs(7 * abs(self.game.AI_color - 1) - col)
                 piece = self.game.main_board.grid[row][column]
 
-                if(self.game.is_piece_selected and self.game.selected_piece != None):
+                if(self.game.is_piece_selected and self.game.selected_piece != None and self.game.selected_piece in self.game.main_board.pieces):
                     if([row, column] == [self.game.selected_piece.row, self.game.selected_piece.column]):
                         self.background_select.blit(self.scale // 8 * col, self.scale // 8 * r)
                     elif([row, column] in self.game.main_board.grid[self.game.selected_piece.row][self.game.selected_piece.column].get_valid_moves() and row%2 == column%2):

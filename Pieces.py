@@ -102,17 +102,26 @@ class Pawn(Piece):
             else:
                 images = self.board.black_images
 
+            
             self.board.grid[self.row][self.column] = None
             if(choice == None and not Promote.active):
                 choice = Promote().promote(self.color)
             if(choice == "Queen"):
-                self.board.grid[row][column] = Queen(images[4], row, column, self.color, self.board)
+                promotion = Queen(images[4], row, column, self.color, self.board)
             elif(choice == "Rook"):
-                self.board.grid[row][column] = Rook(images[1], row, column, self.color, self.board)
+                promotion = Rook(images[1], row, column, self.color, self.board)
             elif(choice == "Bishop"):
-                self.board.grid[row][column] = Bishop(images[3], row, column, self.color, self.board)
+                promotion = Bishop(images[3], row, column, self.color, self.board)
             elif(choice == "Knight"):
-                self.board.grid[row][column] = Knight(images[2], row, column, self.color, self.board)
+                promotion = Knight(images[2], row, column, self.color, self.board)
+            super().move(row, column)
+            for i in range(len(self.board.pieces)):
+                if(self.board.pieces[i] == self):
+                    self.board.pieces.pop(i)
+                    break
+            promotion.steps_taken = self.steps_taken
+            self.board.grid[row][column] = promotion
+            self.board.pieces.append(promotion)
             del self
         else:
             super().move(row, column, checking)
@@ -169,7 +178,7 @@ class Pawn(Piece):
         for i in range(1, move_distance + 1):
             if(self.row != 7 and self.row != 0 and self.board.grid[self.row + (i * multiplier)][self.column] == None):
                 self.valid_moves.append([self.row + (i * multiplier), self.column])
-            elif(self.board.grid[self.row + (i * multiplier)][self.column] != None):
+            elif(0 <= self.row + (i * multiplier) <= 7 and self.board.grid[self.row + (i * multiplier)][self.column] != None):
                 break
         
         if(self.row != 7 and self.row != 0):

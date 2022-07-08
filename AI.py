@@ -44,12 +44,12 @@ class AI(object):
         self.piece_selected = False
         return self.selected_move
 
-    def get_move(self):
-        piece_move = self.select_piece()
-        return piece_move
-
     # def get_move(self):
-    #     return self.get_best_new_board(self.get_future_boards(self.board, 1))[1]
+    #     piece_move = self.select_piece()
+    #     return piece_move
+
+    def get_move(self):
+        return self.get_best_new_board(self.get_future_boards(self.board, 0))[1]
 
     def get_best_open_piece(self):
         best_moves = 0
@@ -100,7 +100,7 @@ class AI(object):
         return move_to_choose
 
     def get_stats_of_board_after_move(self, board, piece):
-        opposing_king_pos = board.get_white_king_pos() if piece.color == 1 else self.get_black_king_pos()
+        opposing_king_pos = board.get_white_king_pos() if self.color == 1 else board.get_black_king_pos()
 
         no_moves = board.no_valid_moves(abs(self.color - 1))
 
@@ -301,6 +301,9 @@ class AI(object):
 
         return [move_to_choose, attributes]
 
+    def get_score_after_move(self, board1, board2):
+        pass
+
     def get_best_new_board(self, boards):
         best = []
         best_score = float('-inf')
@@ -318,9 +321,9 @@ class AI(object):
     def get_future_boards(self, board, future_steps, first_move = None):
         boards = [[board, first_move]]
         if(future_steps == 0):
+
             return boards
         all_self_pieces = board.black_pieces if self.color == 1 else board.white_pieces
-        all_opposing_pieces = board.black_pieces if self.color == 0 else board.white_pieces
         for i in range(len(all_self_pieces)):
             temp_board = Board()
             temp_board.copy(board)

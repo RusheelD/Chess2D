@@ -81,6 +81,7 @@ class Board(object):
     def copy(self, board):
         self.grid = board.grid
         self.pieces = board.pieces
+        self.moves_made = board.moves_made
 
     def deep_copy(self, board):
         self.pieces.clear()
@@ -92,6 +93,9 @@ class Board(object):
                     self.refresh_pieces()
                 else:
                     self.grid[row][column] = None
+        self.moves_made.clear()
+        for move in board.moves_made:
+            self.moves_made.append(move)
         self.refresh_pieces()
 
     def get_white_king_pos(self):
