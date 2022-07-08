@@ -302,10 +302,18 @@ class AI(object):
         return [move_to_choose, attributes]
 
     def get_score_after_move(self, board1, board2):
-        pass
+        pieces_difference = 0
+        for piece in board2.pieces:
+            pieces_difference += piece.value
+        for piece in board1.pieces:
+            pieces_difference -= piece.value
+        
+        score = pieces_difference
+        return score
 
     def get_best_new_board(self, boards):
         best = []
+
         best_score = float('-inf')
         for board in boards:
             best_move_for_board = self.get_best_move_of_board(board[0])
