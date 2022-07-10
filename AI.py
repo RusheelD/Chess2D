@@ -302,13 +302,24 @@ class AI(object):
         return [move_to_choose, attributes]
 
     def get_score_after_move(self, board1, board2):
-        pieces_difference = 0
-        for piece in board2.pieces:
-            pieces_difference += piece.value
-        for piece in board1.pieces:
-            pieces_difference -= piece.value
+        self_pieces_difference = 0
+        opp_pieces_difference = 0
+        self_pieces_pre = board1.white_pieces if self.color==0 else board1.black_pieces
+        self_pieces_post = board2.white_pieces if self.color==0 else board1.black_pieces
+        opp_pieces_pre = board1.white_pieces if self.color==1 else board1.black_pieces
+        opp_pieces_post = board2.white_pieces if self.color==1 else board2.black_pieces
+
+        for piece in self_pieces_post:
+            self_pieces_difference += piece.value
+        for piece in self_pieces_pre:
+            self_pieces_difference -= piece.value
+
+        for piece in opp_pieces_pre:
+            opp_pieces_difference += piece.value
+        for piece in opp_pieces_post:
+            opp_pieces_difference -= piece.value
         
-        score = pieces_difference
+        score = self_pieces_difference + opp_pieces_difference
         return score
 
     def get_best_new_board(self, boards):
