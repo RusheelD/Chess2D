@@ -302,6 +302,15 @@ class AI(object):
         return [move_to_choose, attributes]
 
     def get_score_after_move(self, board1, board2):
+
+        same = True
+        for i in range(8):
+            for j in range(8):
+                if(board1[i][j] != board2[i][j]):
+                    same = False
+        if(same):
+            return float('-inf')
+
         self_pieces_difference = 0
         opp_pieces_difference = 0
         self_pieces_pre = board1.white_pieces if self.color==0 else board1.black_pieces
@@ -335,6 +344,23 @@ class AI(object):
                 best = [board]
             elif(best_move_for_board[1] == best_score):
                 best.append(board)
+        return random.choice(best)
+
+        best = []
+        best_score = float('-inf')
+        for board in boards:
+            if(board[1] == None):
+                best_move_for_board = self.get_best_move_of_board(board[0])
+                board[1] = best_move_for_board[0]
+                score = best_move_for_board[1]
+            else:
+                score = self.get_score_after_move(self.board, board[0])
+
+            if(score > best_score):
+                best_score = score
+                best = [board]
+            elif(score == best_score):
+                best.append(board)            
         return random.choice(best)
 
     def get_future_boards(self, board, future_steps, first_move = None):
