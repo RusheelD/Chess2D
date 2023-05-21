@@ -312,27 +312,38 @@ class AI(object):
         return [move_to_choose, attributes]
 
     def get_score_after_move(self, board1, board2):
-        pieces_difference = 0
-        for piece in board2.pieces:
-            pieces_difference += piece.value
-        for piece in board1.pieces:
-            pieces_difference -= piece.value
 
-        score = pieces_difference
+        same = True
+        for i in range(8):
+            for j in range(8):
+                if(board1[i][j] != board2[i][j]):
+                    same = False
+        if(same):
+            return float('-inf')
+
+        self_pieces_difference = 0
+        opp_pieces_difference = 0
+        self_pieces_pre = board1.white_pieces if self.color==0 else board1.black_pieces
+        self_pieces_post = board2.white_pieces if self.color==0 else board1.black_pieces
+        opp_pieces_pre = board1.white_pieces if self.color==1 else board1.black_pieces
+        opp_pieces_post = board2.white_pieces if self.color==1 else board2.black_pieces
+
+        for piece in self_pieces_post:
+            self_pieces_difference += piece.value
+        for piece in self_pieces_pre:
+            self_pieces_difference -= piece.value
+
+        for piece in opp_pieces_pre:
+            opp_pieces_difference += piece.value
+        for piece in opp_pieces_post:
+            opp_pieces_difference -= piece.value
+        
+        score = self_pieces_difference + opp_pieces_difference
         return score
 
     def get_best_new_board(self, boards):
         best = []
         board_scores = {}
-
-        class Move:
-            def __init__(self, piece, row, column):
-                self.piece = piece
-                self.move = [row, column]
-
-            def __init__(self, lis):
-                self.piece = lis[0]
-                self.move = lis[1]
 
         for board in boards:
             best_move_for_board = self.get_best_move_of_board(board[0])
@@ -340,19 +351,24 @@ class AI(object):
             if (board[1] == None):
                 board[1] = best_move_for_board[0]
 
-            m = Move(board[1])
-
-            if (m in board_scores):
-                board_scores[m] = best_move_for_board[1] if best_move_for_board[1] < board_scores[m] else board_scores[m]
+        best = []
+        best_score = float('-inf')
+        for board in boards:
+            if(board[1] == None):
+                best_move_for_board = self.get_best_move_of_board(board[0])
+                board[1] = best_move_for_board[0]
+                score = best_move_for_board[1]
             else:
-                board_scores[m] = best_move_for_board[1]
-        best_score = max(board_scores.values())
-        best = [[move.piece, move.move] for move, score in board_scores.items() if score ==
-                best_score]
-        choice = random.choice(best)
-        return choice
+                score = self.get_score_after_move(self.board, board[0])
 
-    def get_future_boards(self, board, future_steps, first_move=None):
+            if(score > best_score):
+                best_score = score
+                best = [board]
+            elif(score == best_score):
+                best.append(board)            
+        return random.choice(best)
+
+    def get_future_boards(self, board, future_steps, first_move = None):
         boards = [[board, first_move]]
         if (future_steps == 0):
 
