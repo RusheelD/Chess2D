@@ -22,7 +22,7 @@ class GameMode(object):
                                 font_size=15,
                                 x=self.pop_up.width//2, y= 5*self.pop_up.height//6,
                                 anchor_x='center', anchor_y='center', color=(0, 0, 0, 255))
-        self.label_choice = pyglet.text.Label('(S)ynchronic\t\t(T)wo-player\t\t(O)ne-player',
+        self.label_choice = pyglet.text.Label('(S)ynchronic   (T)wo-player   (O)ne-player',
                                 font_name='Times New Roman',
                                 font_size=15,
                                 x=self.pop_up.width//2, y= 3*self.pop_up.height//6,
